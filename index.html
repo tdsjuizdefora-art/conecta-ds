@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Conecta DS | Hub de Tecnologia</title>
   <link rel="stylesheet" href="css/style.css">
-  <!-- Supabase JS Client v2 Oficial -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- HEADER & BARRA DE NAVEGAÇÃO -->
   <header class="navbar">
     <div class="logo">🚀 CONECTA <span>DS</span></div>
     <nav class="nav-links">
@@ -19,42 +17,40 @@
       <button class="nav-btn" data-tab="vagas">💼 Oportunidades</button>
       <button class="nav-btn" data-tab="desafios">🏆 Desafios</button>
       <button class="nav-btn" data-tab="perfil" id="tab-btn-perfil" style="display: none;">👤 Meu Perfil</button>
+      <button class="nav-btn nav-admin" data-tab="admin" id="tab-btn-admin" style="display: none;">⚙️ Painel Gestão</button>
     </nav>
     <div class="user-area">
-      <div id="notif-badge" class="notif-badge" title="Comunicados recebidos em tempo real">
-        🔔 <span id="notif-count">0</span>
-      </div>
+      <div id="notif-badge" class="notif-badge" title="Novos comunicados">🔔 <span id="notif-count">0</span></div>
       <div id="auth-actions"></div>
     </div>
   </header>
 
-  <!-- CONTEÚDO PRINCIPAL (SPA) -->
   <main class="main-container">
-    <!-- ABA 1: FEED UNIFICADO -->
+    <!-- ABA 1: FEED -->
     <section id="section-feed" class="tab-content active">
       <div class="welcome-banner">
-        <h2 id="feed-greeting">Olá, comunidade Conecta DS! 👋</h2>
-        <p>Acompanhe comunicados oficiais, projetos dos alunos e oportunidades de carreira em um só lugar.</p>
+        <h2 id="feed-greeting">Bem-vindo ao Conecta DS! 👋</h2>
+        <p>A ponte permanente entre estudantes, corpo docente e empresas de tecnologia.</p>
       </div>
       <div class="feed-grid">
         <div class="feed-column">
-          <h3 class="feed-section-title">📢 Comunicados Recentes</h3>
+          <h3 class="feed-section-title">📢 Comunicados Oficiais</h3>
           <div id="feed-noticias" class="compact-list"><p class="loading">Carregando...</p></div>
         </div>
         <div class="feed-column">
-          <h3 class="feed-section-title">💼 Oportunidades Abertas</h3>
+          <h3 class="feed-section-title">💼 Oportunidades em Aberto</h3>
           <div id="feed-vagas" class="compact-list"><p class="loading">Carregando...</p></div>
         </div>
       </div>
     </section>
 
-    <!-- ABA 2: NOTÍCIAS OFICIAIS -->
+    <!-- ABA 2: NOTÍCIAS -->
     <section id="section-noticias" class="tab-content">
       <div class="section-header">
         <h2>Comunicação Institucional</h2>
         <div id="admin-news-btn-area"></div>
       </div>
-      <div id="noticias-list" class="grid-cards"><p class="loading">Carregando comunicados...</p></div>
+      <div id="noticias-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
     <!-- ABA 3: VITRINE DE PROJETOS -->
@@ -63,14 +59,14 @@
         <h2>Vitrine de Projetos dos Estudantes</h2>
         <button id="btn-open-proj-modal" class="btn-primary">+ Submeter Projeto</button>
       </div>
-      <div id="projetos-list" class="grid-cards"><p class="loading">Carregando vitrine...</p></div>
+      <div id="projetos-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
-    <!-- ABA 4: MURAL DE OPORTUNIDADES -->
+    <!-- ABA 4: VAGAS -->
     <section id="section-vagas" class="tab-content">
       <div class="section-header">
-        <h2>Mural de Oportunidades & Estágios</h2>
-        <button id="btn-open-vaga-modal" class="btn-primary">+ Sugerir Oportunidade</button>
+        <h2>Mural de Carreiras & Estágios</h2>
+        <button id="btn-open-vaga-modal" class="btn-primary">+ Divulgar Vaga</button>
       </div>
       <div class="filter-bar">
         <label for="filtro-vaga-tipo">Filtrar por modalidade:</label>
@@ -82,19 +78,19 @@
           <option value="Aprendiz">Aprendiz</option>
         </select>
       </div>
-      <div id="vagas-list" class="grid-cards"><p class="loading">Carregando oportunidades...</p></div>
+      <div id="vagas-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
-    <!-- ABA 5: DESAFIOS E EVENTOS -->
+    <!-- ABA 5: DESAFIOS -->
     <section id="section-desafios" class="tab-content">
       <div class="section-header">
-        <h2>Desafios Técnicos & Eventos</h2>
+        <h2>Desafios & Hackathons</h2>
         <div id="admin-desafio-btn-area"></div>
       </div>
-      <div id="desafios-list" class="grid-cards"><p class="loading">Carregando desafios...</p></div>
+      <div id="desafios-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
-    <!-- ABA 6: MEU PERFIL & BADGES -->
+    <!-- ABA 6: MEU PERFIL -->
     <section id="section-perfil" class="tab-content">
       <div class="section-header">
         <h2>Meu Perfil & Reconhecimentos</h2>
@@ -105,40 +101,60 @@
           <span class="role-badge" id="perfil-role">-</span>
           <p id="perfil-email" class="card-meta">-</p>
           <hr class="divider">
-          <h4>Biografia:</h4>
+          <h4>Bio:</h4>
           <p id="perfil-bio">-</p>
-          <h4 style="margin-top: 0.8rem;">Competências Técnicas:</h4>
+          <h4 style="margin-top: 0.8rem;">Competências:</h4>
           <p id="perfil-habilidades" class="card-tag">-</p>
         </div>
         <div class="card profile-badges-card">
-          <h3>Conquistas & Badges (Gamificação)</h3>
-          <p class="card-meta">As insígnias são desbloqueadas automaticamente conforme seus projetos são homologados.</p>
-          <div id="badges-container" class="badges-grid">
-            <p class="loading">Carregando conquistas...</p>
-          </div>
+          <h3>Conquistas & Reconhecimentos</h3>
+          <p class="card-meta">Conquistadas automaticamente ao homologar projetos e desafios.</p>
+          <div id="badges-container" class="badges-grid"><p class="loading">Carregando...</p></div>
         </div>
       </div>
     </section>
+
+    <!-- ABA 7: PAINEL ADMIN -->
+    <section id="section-admin" class="tab-content">
+      <div class="section-header">
+        <h2>Painel de Gestão: Convites Institucionais</h2>
+      </div>
+      <div class="card" style="max-width: 600px; margin-bottom: 2rem;">
+        <h3>Convidar Professor ou Empresa Parceira</h3>
+        <p class="card-meta">O e-mail cadastrado aqui receberá o papel com privilégios automáticos ao confirmar a conta.</p>
+        <form id="form-convite" style="margin-top: 1rem;">
+          <label for="convite-email">E-mail do Convidado:</label>
+          <input type="email" id="convite-email" required placeholder="docente@escola.br ou rh@empresa.com">
+          
+          <label for="convite-role">Tipo de Acesso Concedido:</label>
+          <select id="convite-role">
+            <option value="professor">Professor / Coordenador</option>
+            <option value="empresa">Empresa Parceira</option>
+          </select>
+          <button type="submit" class="btn-primary block">Gerar Convite Institucional</button>
+        </form>
+      </div>
+      <h3>Convites Pendentes e Emitidos</h3>
+      <div id="convites-list" class="grid-cards"><p class="loading">Carregando convites...</p></div>
+    </section>
   </main>
 
-  <!-- ==================== MODAIS ==================== -->
-
-  <!-- Modal 1: Autenticação (Login / Cadastro Seguro) -->
+  <!-- MODAL AUTH -->
   <dialog id="modal-auth" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-auth">&times;</button>
       <h3 id="auth-title">Acessar o Conecta DS</h3>
       <form id="form-auth">
-        <label for="auth-email">E-mail válido:</label>
+        <label for="auth-email">E-mail:</label>
         <input type="email" id="auth-email" required placeholder="seuemail@exemplo.com">
 
         <label for="auth-password">Senha:</label>
-        <input type="password" id="auth-password" required minlength="6" placeholder="Mínimo de 6 dígitos">
+        <input type="password" id="auth-password" required minlength="6" placeholder="Mínimo 6 caracteres">
 
         <div id="register-fields" style="display: none;">
-          <label for="auth-nome">Nome Completo:</label>
-          <input type="text" id="auth-nome" placeholder="Ex: Maria da Silva">
-          <small class="hint">⚠️ Um link de confirmação será enviado para este e-mail antes do primeiro acesso.</small>
+          <label for="auth-nome">Nome Completo (ou Razão Social se Empresa):</label>
+          <input type="text" id="auth-nome" placeholder="Ex: Lucas Mendes">
+          <small class="hint">ℹ️ Estudantes cadastram-se publicamente. Professores e Empresas devem utilizar o e-mail convidado.</small>
         </div>
 
         <button type="submit" id="btn-submit-auth" class="btn-primary block">Entrar</button>
@@ -150,84 +166,69 @@
     </div>
   </dialog>
 
-  <!-- Modal 2: Submeter Projeto (Alunos e Professores) -->
+  <!-- MODAL PROJETO -->
   <dialog id="modal-projeto" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-projeto">&times;</button>
-      <h3>Submeter Projeto para a Vitrine</h3>
+      <h3>Submeter Projeto na Vitrine</h3>
       <form id="form-projeto">
-        <label for="proj-titulo">Título do Sistema/App:</label>
-        <input type="text" id="proj-titulo" required placeholder="Ex: Gestor de Tarefas">
-
-        <label for="proj-descricao">Descrição do Projeto:</label>
-        <textarea id="proj-descricao" rows="3" required placeholder="O que ele faz e quais problemas resolve?"></textarea>
-
+        <label for="proj-titulo">Título:</label>
+        <input type="text" id="proj-titulo" required placeholder="Ex: Sistema de Gestão Escolar">
+        <label for="proj-descricao">Descrição:</label>
+        <textarea id="proj-descricao" rows="3" required></textarea>
         <label for="proj-tecnologias">Tecnologias Utilizadas:</label>
-        <input type="text" id="proj-tecnologias" required placeholder="Ex: HTML, CSS, JavaScript, Supabase">
-
-        <label for="proj-autores">Integrantes da Equipe:</label>
-        <input type="text" id="proj-autores" required placeholder="Ex: Carlos, Ana e Pedro">
-
-        <label for="proj-github">Repositório no GitHub:</label>
-        <input type="url" id="proj-github" placeholder="https://github.com/usuario/repo">
-
-        <label for="proj-demo">Link da Demonstração Online (Deploy):</label>
-        <input type="url" id="proj-demo" placeholder="https://seuprojeto.github.io">
-
+        <input type="text" id="proj-tecnologias" required placeholder="Ex: HTML, CSS, JS, Supabase">
+        <label for="proj-autores">Alunos Desenvolvedores:</label>
+        <input type="text" id="proj-autores" required placeholder="Ex: Beatriz e Gabriel">
+        <label for="proj-github">Repositório GitHub:</label>
+        <input type="url" id="proj-github" placeholder="https://github.com/...">
+        <label for="proj-demo">Deploy / Link Online:</label>
+        <input type="url" id="proj-demo" placeholder="https://...">
         <button type="submit" class="btn-primary block">Enviar para Avaliação</button>
       </form>
     </div>
   </dialog>
 
-  <!-- Modal 3: Sugerir Vaga (Estudantes e Empresas) -->
+  <!-- MODAL VAGA -->
   <dialog id="modal-vaga" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-vaga">&times;</button>
-      <h3>Divulgar Oportunidade</h3>
+      <h3>Anunciar Oportunidade</h3>
       <form id="form-vaga">
-        <label for="vaga-titulo">Título da Posição:</label>
-        <input type="text" id="vaga-titulo" required placeholder="Ex: Estágio em Desenvolvimento Web">
-
-        <label for="vaga-empresa">Empresa Contratante:</label>
-        <input type="text" id="vaga-empresa" required placeholder="Nome da empresa">
-
-        <label for="vaga-localizacao">Local / Formato:</label>
-        <input type="text" id="vaga-localizacao" required placeholder="Ex: Remoto ou Juiz de Fora - MG">
-
-        <label for="vaga-tipo">Modalidade:</label>
+        <label for="vaga-titulo">Título da Vaga:</label>
+        <input type="text" id="vaga-titulo" required placeholder="Ex: Estágio Front-end">
+        <label for="vaga-empresa">Nome da Empresa:</label>
+        <input type="text" id="vaga-empresa" required placeholder="Ex: Tech Solutions">
+        <label for="vaga-localizacao">Local / Regime:</label>
+        <input type="text" id="vaga-localizacao" required placeholder="Ex: Remoto ou Juiz de Fora">
+        <label for="vaga-tipo">Tipo de Contratação:</label>
         <select id="vaga-tipo">
           <option value="Estágio">Estágio</option>
           <option value="Júnior">Júnior</option>
           <option value="Freelance">Freelance</option>
           <option value="Aprendiz">Aprendiz</option>
         </select>
-
         <label for="vaga-remuneracao">Remuneração / Bolsa (Opcional):</label>
-        <input type="text" id="vaga-remuneracao" placeholder="Ex: R$ 1.600,00 + Benefícios">
-
-        <label for="vaga-tecnologias">Tecnologias Requeridas:</label>
-        <input type="text" id="vaga-tecnologias" required placeholder="Ex: JavaScript, SQL, Git">
-
-        <label for="vaga-link">Link de Candidatura ou Contato:</label>
+        <input type="text" id="vaga-remuneracao" placeholder="Ex: R$ 1.500,00 + VT">
+        <label for="vaga-tecnologias">Requisitos Técnicos:</label>
+        <input type="text" id="vaga-tecnologias" required placeholder="Ex: JavaScript, Git">
+        <label for="vaga-link">Link ou E-mail para Candidatura:</label>
         <input type="text" id="vaga-link" required placeholder="https://... ou vagas@empresa.com">
-
-        <button type="submit" class="btn-primary block">Enviar Oportunidade</button>
+        <button type="submit" class="btn-primary block">Submeter Vaga</button>
       </form>
     </div>
   </dialog>
 
-  <!-- Modal 4: Criar Notícia (Exclusivo Professores) -->
+  <!-- MODAL NOTÍCIA -->
   <dialog id="modal-noticia" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-noticia">&times;</button>
       <h3>Publicar Comunicado Oficial</h3>
       <form id="form-noticia">
-        <label for="noticia-titulo">Título do Comunicado:</label>
+        <label for="noticia-titulo">Título:</label>
         <input type="text" id="noticia-titulo" required>
-
-        <label for="noticia-resumo">Texto / Mensagem:</label>
+        <label for="noticia-resumo">Texto do Comunicado:</label>
         <textarea id="noticia-resumo" rows="4" required></textarea>
-
         <label for="noticia-categoria">Categoria:</label>
         <select id="noticia-categoria">
           <option value="Aviso">Aviso</option>
@@ -235,52 +236,42 @@
           <option value="Prazo">Prazo</option>
           <option value="Oportunidade">Oportunidade</option>
         </select>
-
-        <label for="noticia-prazo">Prazo de Resposta / Data Limite (Opcional):</label>
+        <label for="noticia-prazo">Prazo Limite (Opcional):</label>
         <input type="text" id="noticia-prazo" placeholder="Ex: 30 de Outubro">
-
-        <label for="noticia-link">Link de Ação / Edital (Opcional):</label>
+        <label for="noticia-link">Link de Ação (Opcional):</label>
         <input type="url" id="noticia-link">
-
-        <button type="submit" class="btn-primary block">Publicar Agora</button>
+        <button type="submit" class="btn-primary block">Publicar</button>
       </form>
     </div>
   </dialog>
 
-  <!-- Modal 5: Criar Desafio (Exclusivo Professores) -->
+  <!-- MODAL DESAFIO -->
   <dialog id="modal-desafio" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-desafio">&times;</button>
-      <h3>Criar Desafio Técnico</h3>
+      <h3>Lançar Novo Desafio / Hackathon</h3>
       <form id="form-desafio">
         <label for="desafio-titulo">Nome do Desafio:</label>
         <input type="text" id="desafio-titulo" required placeholder="Ex: Desafio Web 2026">
-
-        <label for="desafio-descricao">Regulamento / Orientações:</label>
+        <label for="desafio-descricao">Regulamento / Instruções:</label>
         <textarea id="desafio-descricao" rows="4" required></textarea>
-
         <label for="desafio-fase">Fase Inicial:</label>
         <select id="desafio-fase">
           <option value="inscricoes">Inscrições Abertas</option>
           <option value="desenvolvimento">Desenvolvimento</option>
           <option value="avaliacao">Avaliação</option>
         </select>
-
         <label for="desafio-data-insc">Período de Inscrição:</label>
         <input type="text" id="desafio-data-insc" required placeholder="Ex: 01/10 a 10/10">
-
         <label for="desafio-data-fim">Data Final de Entrega:</label>
-        <input type="text" id="desafio-data-fim" required placeholder="Ex: 30/10">
-
+        <input type="text" id="desafio-data-fim" required placeholder="Ex: 28/10">
         <label for="desafio-link">Link do Regulamento Completo (Opcional):</label>
         <input type="url" id="desafio-link">
-
         <button type="submit" class="btn-primary block">Lançar Desafio</button>
       </form>
     </div>
   </dialog>
 
-  <!-- Script Principal Modular -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

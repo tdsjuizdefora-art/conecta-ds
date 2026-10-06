@@ -11,25 +11,31 @@ export const portalController = {
     this.currentSession = await authModel.getSession();
     const isProfessor = this.currentSession?.perfil?.role === 'professor';
 
-    this.configurarNavbar();
+    this.configurarNavbar(isProfessor);
     await this.carregarDados(isProfessor);
     this.configurarEventosUI(isProfessor);
     this.iniciarRealtime();
   },
 
-  configurarNavbar() {
+  configurarNavbar(isProfessor) {
     const authActions = document.getElementById('auth-actions');
     const tabPerfil = document.getElementById('tab-btn-perfil');
+    const tabAdmin = document.getElementById('tab-btn-admin');
 
     if (this.currentSession) {
       tabPerfil.style.display = 'inline-block';
+      if (isProfessor) tabAdmin.style.display = 'inline-block';
+
       authActions.innerHTML = `
-        <span style="font-size:0.85rem; color:#fff; font-weight:600;">${this.currentSession.perfil?.nome}</span>
+        <span style="font-size:0.85rem; color:#fff; font-weight:600;">
+          ${this.currentSession.perfil?.nome} (${this.currentSession.perfil?.role})
+        </span>
         <button id="btn-logout" class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;">Sair</button>
       `;
       document.getElementById('feed-greeting').innerText = `Olá, ${this.currentSession.perfil?.nome}! 👋`;
     } else {
       tabPerfil.style.display = 'none';
+      tabAdmin.style.display = 'none';
       authActions.innerHTML = `<button id="btn-open-login" class="btn-primary">Entrar</button>`;
     }
   },
@@ -52,6 +58,9 @@ export const portalController = {
       if (isProfessor) {
         document.getElementById('admin-news-btn-area').innerHTML = `<button id="btn-open-noticia-modal" class="btn-primary">+ Novo Comunicado</button>`;
         document.getElementById('admin-desafio-btn-area').innerHTML = `<button id="btn-open-desafio-modal" class="btn-primary">+ Novo Desafio</button>`;
+        
+        const convites = await portalModel.getConvites();
+        portalView.renderConvites(document.getElementById('convites-list'), convites);
       }
 
       if (this.currentSession?.perfil) {
@@ -59,12 +68,12 @@ export const portalController = {
         portalView.renderPerfil(this.currentSession.perfil, badges);
       }
     } catch (err) {
-      console.error('Falha ao carregar dados do portal:', err);
+      console.error('Falha ao obter dados:', err);
     }
   },
 
   configurarEventosUI(isProfessor) {
-    // 1. Alternância de Abas
+    // Abas
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -74,7 +83,7 @@ export const portalController = {
       });
     });
 
-    // 2. Filtro de Vagas
+    // Filtro de Vagas
     document.getElementById('filtro-vaga-tipo').addEventListener('change', async (e) => {
       const filtro = e.target.value;
       const todas = await portalModel.getVagas();
@@ -82,7 +91,7 @@ export const portalController = {
       portalView.renderVagas(document.getElementById('vagas-list'), filtradas, isProfessor);
     });
 
-    // 3. Controle dos Modais
+    // Modais de Autenticação
     const modalAuth = document.getElementById('modal-auth');
     let isRegisterMode = false;
 
@@ -96,12 +105,11 @@ export const portalController = {
       e.preventDefault();
       isRegisterMode = !isRegisterMode;
       document.getElementById('register-fields').style.display = isRegisterMode ? 'block' : 'none';
-      document.getElementById('auth-title').innerText = isRegisterMode ? 'Criar Conta no Conecta DS' : 'Acessar o Conecta DS';
-      document.getElementById('btn-submit-auth').innerText = isRegisterMode ? 'Cadastrar e Validar E-mail' : 'Entrar';
+      document.getElementById('auth-title').innerText = isRegisterMode ? 'Cadastrar Conta no Conecta DS' : 'Acessar o Conecta DS';
+      document.getElementById('btn-submit-auth').innerText = isRegisterMode ? 'Cadastrar e Confirmar' : 'Entrar';
       document.getElementById('link-toggle-auth').innerText = isRegisterMode ? 'Já possui conta? Entrar' : 'Cadastre-se';
     });
 
-    // 4. Submissão de Autenticação (Login / Cadastro)
     document.getElementById('form-auth').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('auth-email').value;
@@ -111,22 +119,22 @@ export const portalController = {
         if (isRegisterMode) {
           const nome = document.getElementById('auth-nome').value;
           await authModel.register(email, pass, nome);
-          alert('📧 Cadastro realizado! Enviamos um link de confirmação para o seu e-mail. Ative sua conta antes de efetuar login.');
+          alert('📧 Cadastro efetuado! Verifique sua caixa de entrada para confirmar o e-mail antes do primeiro acesso.');
           modalAuth.close();
         } else {
           await authModel.login(email, pass);
           window.location.reload();
         }
       } catch (err) {
-        alert('Erro de autenticação: ' + err.message);
+        alert('Falha: ' + err.message);
       }
     });
 
-    // 5. Modais Operacionais
-    const bindModal = (openBtnId, modalId, closeBtnId) => {
+    // Modais Operacionais
+    const bindModal = (openId, modalId, closeId) => {
       document.addEventListener('click', (e) => {
-        if (e.target.id === openBtnId) document.getElementById(modalId).showModal();
-        if (e.target.id === closeBtnId) document.getElementById(modalId).close();
+        if (e.target.id === openId) document.getElementById(modalId).showModal();
+        if (e.target.id === closeId) document.getElementById(modalId).close();
       });
     };
 
@@ -135,14 +143,10 @@ export const portalController = {
     bindModal('btn-open-noticia-modal', 'modal-noticia', 'close-noticia');
     bindModal('btn-open-desafio-modal', 'modal-desafio', 'close-desafio');
 
-    // 6. Formulários
+    // Submissão de Projeto
     document.getElementById('form-projeto').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!this.currentSession) {
-        alert('Você precisa estar autenticado para submeter um projeto!');
-        document.getElementById('modal-auth').showModal();
-        return;
-      }
+      if (!this.currentSession) return alert('Faça login para submeter projetos!');
 
       try {
         await portalModel.criarProjeto({
@@ -154,18 +158,15 @@ export const portalController = {
           link_projeto: document.getElementById('proj-demo').value,
           status: isProfessor ? 'aprovado' : 'pendente'
         });
-        alert('Projeto enviado com sucesso!');
+        alert('Projeto enviado!');
         window.location.reload();
-      } catch (err) { alert('Erro: ' + err.message); }
+      } catch (err) { alert(err.message); }
     });
 
+    // Submissão de Vaga
     document.getElementById('form-vaga').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!this.currentSession) {
-        alert('Você precisa estar autenticado para sugerir uma vaga!');
-        document.getElementById('modal-auth').showModal();
-        return;
-      }
+      if (!this.currentSession) return alert('Faça login para submeter vagas!');
 
       try {
         await portalModel.criarVaga({
@@ -178,11 +179,12 @@ export const portalController = {
           link_candidatura: document.getElementById('vaga-link').value,
           status: isProfessor ? 'aprovada' : 'pendente'
         });
-        alert('Oportunidade registrada para moderação!');
+        alert('Vaga enviada para análise!');
         window.location.reload();
-      } catch (err) { alert('Erro: ' + err.message); }
+      } catch (err) { alert(err.message); }
     });
 
+    // Ações de Professor
     if (isProfessor) {
       document.getElementById('form-noticia').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -194,9 +196,9 @@ export const portalController = {
             prazo: document.getElementById('noticia-prazo').value,
             link_acao: document.getElementById('noticia-link').value
           });
-          alert('Comunicado oficial publicado!');
+          alert('Notícia publicada!');
           window.location.reload();
-        } catch (err) { alert('Erro: ' + err.message); }
+        } catch (err) { alert(err.message); }
       });
 
       document.getElementById('form-desafio').addEventListener('submit', async (e) => {
@@ -210,35 +212,49 @@ export const portalController = {
             prazo_encerramento: document.getElementById('desafio-data-fim').value,
             link_edital: document.getElementById('desafio-link').value
           });
-          alert('Desafio criado com sucesso!');
+          alert('Desafio criado!');
+          window.location.reload();
+        } catch (err) { alert(err.message); }
+      });
+
+      // Gerador de Convite com link copiado
+      document.getElementById('form-convite').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('convite-email').value.trim();
+        const role = document.getElementById('convite-role').value;
+
+        try {
+          await portalModel.criarConvite(email, role);
+          const link = `${window.location.origin}${window.location.pathname}#cadastro?email=${encodeURIComponent(email)}`;
+          await navigator.clipboard.writeText(link);
+          alert(`✅ Convite emitido para ${email} como ${role}!\n\nLink copiado para a área de transferência:\n${link}`);
           window.location.reload();
         } catch (err) { alert('Erro: ' + err.message); }
       });
     }
 
-    // 7. Moderação (Aprovações do Professor)
+    // Moderação
     document.addEventListener('click', async (e) => {
       if (e.target.classList.contains('btn-aprovar-projeto')) {
         await portalModel.aprovarProjeto(e.target.dataset.id);
-        alert('Projeto aprovado! Badge concedida ao autor caso seja o primeiro.');
+        alert('Projeto aprovado! Badge concedida se for o 1º projeto.');
         window.location.reload();
       }
       if (e.target.classList.contains('btn-aprovar-vaga')) {
         await portalModel.aprovarVaga(e.target.dataset.id);
-        alert('Vaga homologada no mural de oportunidades!');
+        alert('Vaga aprovada no mural!');
         window.location.reload();
       }
     });
   },
 
-  // 8. Notificações Realtime via Supabase WebSockets
   iniciarRealtime() {
     supabase
       .channel('noticias-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'noticias' }, payload => {
         this.notifCounter++;
         document.getElementById('notif-count').innerText = this.notifCounter;
-        alert(`🔔 Novo Comunicado Institucional: ${payload.new.titulo}`);
+        alert(`🔔 Novo Comunicado: ${payload.new.titulo}`);
       })
       .subscribe();
   }

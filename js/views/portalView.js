@@ -9,7 +9,7 @@ export const portalView = {
         <strong style="color:#fff;">${n.titulo}</strong>
         <p style="font-size:0.85rem;">${n.resumo}</p>
       </div>
-    `).join('') || '<p>Sem avisos recentes.</p>';
+    `).join('') || '<p>Sem avisos no momento.</p>';
 
     feedVagas.innerHTML = vagas.slice(0, 3).map(v => `
       <div class="card">
@@ -67,7 +67,7 @@ export const portalView = {
           ${isProfessor && v.status === 'pendente' ? `<button class="btn-primary btn-aprovar-vaga" data-id="${v.id}">Homologar Vaga</button>` : ''}
         </div>
       </article>
-    `).join('') || '<p>Nenhuma oportunidade disponível no momento.</p>';
+    `).join('') || '<p>Nenhuma oportunidade disponível.</p>';
   },
 
   renderDesafios(container, desafios) {
@@ -77,7 +77,7 @@ export const portalView = {
         <h3 class="card-title">${d.titulo}</h3>
         <p>${d.descricao}</p>
         <p class="card-meta">📝 Inscrições até: ${d.prazo_inscricao}</p>
-        <p class="card-meta">🏁 Conclusão: ${d.prazo_encerramento}</p>
+        <p class="card-meta">🏁 Encerramento: ${d.prazo_encerramento}</p>
         ${d.link_edital ? `<div class="card-actions"><a href="${d.link_edital}" target="_blank" class="btn-secondary">Edital Completo</a></div>` : ''}
       </article>
     `).join('') || '<p>Nenhum desafio aberto.</p>';
@@ -85,14 +85,29 @@ export const portalView = {
 
   renderPerfil(perfil, conquistas) {
     document.getElementById('perfil-nome').innerText = perfil.nome;
-    document.getElementById('perfil-role').innerText = perfil.role;
+    document.getElementById('perfil-role').innerText = perfil.role.toUpperCase();
     document.getElementById('perfil-email').innerText = perfil.email;
     document.getElementById('perfil-bio').innerText = perfil.bio || 'Sem biografia informada.';
-    document.getElementById('perfil-habilidades').innerText = perfil.habilidades || 'Nenhuma competência cadastrada.';
+
+    const badgesCard = document.querySelector('.profile-badges-card');
+
+    if (perfil.role === 'empresa') {
+      badgesCard.innerHTML = `
+        <h3>Painel da Empresa Parceira 🏢</h3>
+        <p class="card-meta">Sua organização está autorizada a submeter vagas diretamente ao mural.</p>
+        <div style="margin-top: 1.5rem;">
+          <button id="btn-open-vaga-modal-perfil" class="btn-primary">+ Divulgar Nova Vaga</button>
+        </div>
+      `;
+      document.getElementById('btn-open-vaga-modal-perfil')?.addEventListener('click', () => {
+        document.getElementById('modal-vaga').showModal();
+      });
+      return;
+    }
 
     const badgesContainer = document.getElementById('badges-container');
     if (!conquistas || conquistas.length === 0) {
-      badgesContainer.innerHTML = `<p style="font-size:0.85rem;">Nenhuma badge desbloqueada. Submeta projetos para começar!</p>`;
+      badgesContainer.innerHTML = `<p style="font-size:0.85rem;">Nenhuma badge desbloqueada ainda. Submeta projetos na vitrine!</p>`;
       return;
     }
 
@@ -103,5 +118,15 @@ export const portalView = {
         <div class="badge-desc">${c.badges.descricao}</div>
       </div>
     `).join('');
+  },
+
+  renderConvites(container, convites) {
+    container.innerHTML = convites.map(c => `
+      <article class="card">
+        <span class="card-tag">${c.role.toUpperCase()}</span>
+        <h4 style="color:#fff;">${c.email}</h4>
+        <p class="card-meta">Status: ${c.usado ? '✅ Conta Ativada' : '⏳ Aguardando Cadastro'}</p>
+      </article>
+    `).join('') || '<p>Nenhum convite emitido até o momento.</p>';
   }
 };

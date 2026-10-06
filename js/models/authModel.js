@@ -1,7 +1,6 @@
 import { supabase } from '../config/supabaseClient.js';
 
 export const authModel = {
-  // Retorna sessão do usuário autenticado e dados da tabela perfis
   async getSession() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return null;
@@ -13,34 +12,29 @@ export const authModel = {
       .single();
 
     if (error) {
-      console.error('Falha ao recuperar perfil associado:', error);
+      console.error('Erro ao recuperar perfil:', error);
       return { user: session.user, perfil: null };
     }
 
     return { user: session.user, perfil };
   },
 
-  // Login via e-mail e senha
   async login(email, password) {
     const res = await supabase.auth.signInWithPassword({ email, password });
     if (res.error) throw res.error;
     return res.data;
   },
 
-  // Registro: todo usuário nasce como 'aluno' por regra do banco
   async register(email, password, nome) {
     const res = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { nome } // Salvo nos metadados e lido pelo trigger handle_new_user()
-      }
+      options: { data: { nome } }
     });
     if (res.error) throw res.error;
     return res.data;
   },
 
-  // Encerra a sessão
   async logout() {
     return await supabase.auth.signOut();
   }
