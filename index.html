@@ -17,10 +17,13 @@
       <button class="nav-btn" data-tab="vagas">💼 Oportunidades</button>
       <button class="nav-btn" data-tab="desafios">🏆 Desafios</button>
       <button class="nav-btn" data-tab="perfil" id="tab-btn-perfil" style="display: none;">👤 Meu Perfil</button>
-      <button class="nav-btn nav-admin" data-tab="admin" id="tab-btn-admin" style="display: none;">⚙️ Painel Gestão</button>
+      <a href="admin.html" class="nav-btn nav-admin" id="link-admin-panel" style="display: none;">⚙️ Backoffice Gestão</a>
     </nav>
     <div class="user-area">
-      <div id="notif-badge" class="notif-badge" title="Novos comunicados">🔔 <span id="notif-count">0</span></div>
+      <!-- SINO INTERATIVO -->
+      <div id="notif-badge" class="notif-badge" title="Clique para ver os comunicados recentes">
+        🔔 <span id="notif-count">0</span>
+      </div>
       <div id="auth-actions"></div>
     </div>
   </header>
@@ -48,7 +51,6 @@
     <section id="section-noticias" class="tab-content">
       <div class="section-header">
         <h2>Comunicação Institucional</h2>
-        <div id="admin-news-btn-area"></div>
       </div>
       <div id="noticias-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
@@ -62,21 +64,21 @@
       <div id="projetos-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
-    <!-- ABA 4: VAGAS -->
+    <!-- ABA 4: VAGAS COM FILTRO DUPLO (TIPO + STACK) -->
     <section id="section-vagas" class="tab-content">
       <div class="section-header">
         <h2>Mural de Carreiras & Estágios</h2>
         <button id="btn-open-vaga-modal" class="btn-primary">+ Divulgar Vaga</button>
       </div>
       <div class="filter-bar">
-        <label for="filtro-vaga-tipo">Filtrar por modalidade:</label>
         <select id="filtro-vaga-tipo">
-          <option value="todos">Todas as vagas</option>
+          <option value="todos">Todas as modalidades</option>
           <option value="Estágio">Estágio</option>
           <option value="Júnior">Júnior</option>
           <option value="Freelance">Freelance</option>
           <option value="Aprendiz">Aprendiz</option>
         </select>
+        <input type="text" id="filtro-vaga-stack" class="input-search-stack" placeholder="🔍 Filtrar tecnologia (ex: React, Python, SQL)...">
       </div>
       <div id="vagas-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
@@ -85,15 +87,15 @@
     <section id="section-desafios" class="tab-content">
       <div class="section-header">
         <h2>Desafios & Hackathons</h2>
-        <div id="admin-desafio-btn-area"></div>
       </div>
       <div id="desafios-list" class="grid-cards"><p class="loading">Carregando...</p></div>
     </section>
 
-    <!-- ABA 6: MEU PERFIL -->
+    <!-- ABA 6: MEU PERFIL (COM BOTÃO DE EDIÇÃO) -->
     <section id="section-perfil" class="tab-content">
       <div class="section-header">
-        <h2>Meu Perfil & Reconhecimentos</h2>
+        <h2>Meu Perfil Acadêmico & Conquistas</h2>
+        <button id="btn-open-edit-perfil" class="btn-secondary">✏️ Editar Meus Dados</button>
       </div>
       <div class="profile-layout">
         <div class="card profile-card">
@@ -103,41 +105,23 @@
           <hr class="divider">
           <h4>Bio:</h4>
           <p id="perfil-bio">-</p>
-          <h4 style="margin-top: 0.8rem;">Competências:</h4>
+          <h4 style="margin-top: 0.8rem;">Competências Técnicas:</h4>
           <p id="perfil-habilidades" class="card-tag">-</p>
+          <div class="profile-social-links" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+            <a id="perfil-github-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">GitHub</a>
+            <a id="perfil-linkedin-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">LinkedIn</a>
+          </div>
         </div>
         <div class="card profile-badges-card">
           <h3>Conquistas & Reconhecimentos</h3>
-          <p class="card-meta">Conquistadas automaticamente ao homologar projetos e desafios.</p>
+          <p class="card-meta">Insígnias atribuídas automaticamente ao aprovar projetos e desafios.</p>
           <div id="badges-container" class="badges-grid"><p class="loading">Carregando...</p></div>
         </div>
       </div>
     </section>
-
-    <!-- ABA 7: PAINEL ADMIN -->
-    <section id="section-admin" class="tab-content">
-      <div class="section-header">
-        <h2>Painel de Gestão: Convites Institucionais</h2>
-      </div>
-      <div class="card" style="max-width: 600px; margin-bottom: 2rem;">
-        <h3>Convidar Professor ou Empresa Parceira</h3>
-        <p class="card-meta">O e-mail cadastrado aqui receberá o papel com privilégios automáticos ao confirmar a conta.</p>
-        <form id="form-convite" style="margin-top: 1rem;">
-          <label for="convite-email">E-mail do Convidado:</label>
-          <input type="email" id="convite-email" required placeholder="docente@escola.br ou rh@empresa.com">
-          
-          <label for="convite-role">Tipo de Acesso Concedido:</label>
-          <select id="convite-role">
-            <option value="professor">Professor / Coordenador</option>
-            <option value="empresa">Empresa Parceira</option>
-          </select>
-          <button type="submit" class="btn-primary block">Gerar Convite Institucional</button>
-        </form>
-      </div>
-      <h3>Convites Pendentes e Emitidos</h3>
-      <div id="convites-list" class="grid-cards"><p class="loading">Carregando convites...</p></div>
-    </section>
   </main>
+
+  <!-- ==================== MODAIS ==================== -->
 
   <!-- MODAL AUTH -->
   <dialog id="modal-auth" class="modal">
@@ -154,7 +138,15 @@
         <div id="register-fields" style="display: none;">
           <label for="auth-nome">Nome Completo (ou Razão Social se Empresa):</label>
           <input type="text" id="auth-nome" placeholder="Ex: Lucas Mendes">
-          <small class="hint">ℹ️ Estudantes cadastram-se publicamente. Professores e Empresas devem utilizar o e-mail convidado.</small>
+
+          <div style="margin-top: 1rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+            <input type="checkbox" id="auth-termos" style="width: auto; margin-top: 4px;">
+            <label for="auth-termos" style="font-size: 0.8rem; margin: 0; line-height: 1.4;">
+              Li e concordo com os <a href="#" id="link-abrir-termos" style="color: var(--accent); text-decoration: underline;">Termos de Uso e Política de Privacidade (LGPD)</a> da instituição.
+            </label>
+          </div>
+
+          <small class="hint">ℹ️ Estudantes cadastram-se publicamente. Professores e Empresas parceiras devem utilizar o e-mail previamente convidado pela coordenação.</small>
         </div>
 
         <button type="submit" id="btn-submit-auth" class="btn-primary block">Entrar</button>
@@ -163,6 +155,32 @@
         <span id="text-toggle-auth">Não tem conta?</span>
         <a href="#" id="link-toggle-auth">Cadastre-se</a>
       </p>
+    </div>
+  </dialog>
+
+  <!-- MODAL EDITAR MEU PERFIL (RESTABELECIDO) -->
+  <dialog id="modal-edit-perfil" class="modal">
+    <div class="modal-content">
+      <button class="btn-close" id="close-edit-perfil">&times;</button>
+      <h3>Editar Meu Perfil</h3>
+      <form id="form-edit-perfil">
+        <label for="mep-nome">Nome Completo:</label>
+        <input type="text" id="mep-nome" required>
+
+        <label for="mep-bio">Biografia / Sobre Você:</label>
+        <textarea id="mep-bio" rows="3" placeholder="Fale brevemente sobre sua trajetória e interesses..."></textarea>
+
+        <label for="mep-habilidades">Competências (separadas por vírgula):</label>
+        <input type="text" id="mep-habilidades" placeholder="Ex: HTML, CSS, JavaScript, React, SQL">
+
+        <label for="mep-github">Link do seu GitHub:</label>
+        <input type="url" id="mep-github" placeholder="https://github.com/seuusuario">
+
+        <label for="mep-linkedin">Link do seu LinkedIn:</label>
+        <input type="url" id="mep-linkedin" placeholder="https://linkedin.com/in/seuusuario">
+
+        <button type="submit" class="btn-primary block">Salvar Alterações</button>
+      </form>
     </div>
   </dialog>
 
@@ -193,7 +211,7 @@
   <dialog id="modal-vaga" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-vaga">&times;</button>
-      <h3>Anunciar Oportunidade</h3>
+      <h3>Divulgar Oportunidade</h3>
       <form id="form-vaga">
         <label for="vaga-titulo">Título da Vaga:</label>
         <input type="text" id="vaga-titulo" required placeholder="Ex: Estágio Front-end">
@@ -219,56 +237,26 @@
     </div>
   </dialog>
 
-  <!-- MODAL NOTÍCIA -->
-  <dialog id="modal-noticia" class="modal">
-    <div class="modal-content">
-      <button class="btn-close" id="close-noticia">&times;</button>
-      <h3>Publicar Comunicado Oficial</h3>
-      <form id="form-noticia">
-        <label for="noticia-titulo">Título:</label>
-        <input type="text" id="noticia-titulo" required>
-        <label for="noticia-resumo">Texto do Comunicado:</label>
-        <textarea id="noticia-resumo" rows="4" required></textarea>
-        <label for="noticia-categoria">Categoria:</label>
-        <select id="noticia-categoria">
-          <option value="Aviso">Aviso</option>
-          <option value="Evento">Evento</option>
-          <option value="Prazo">Prazo</option>
-          <option value="Oportunidade">Oportunidade</option>
-        </select>
-        <label for="noticia-prazo">Prazo Limite (Opcional):</label>
-        <input type="text" id="noticia-prazo" placeholder="Ex: 30 de Outubro">
-        <label for="noticia-link">Link de Ação (Opcional):</label>
-        <input type="url" id="noticia-link">
-        <button type="submit" class="btn-primary block">Publicar</button>
-      </form>
-    </div>
-  </dialog>
+  <!-- MODAL LGPD -->
+  <dialog id="modal-termos" class="modal" style="max-width: 650px;">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+      <button class="btn-close" id="close-termos">&times;</button>
+      <h3>📜 Termos de Uso e Política de Privacidade (LGPD)</h3>
+      <hr class="divider">
+      <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-main); text-align: justify;">
+        <h4 style="color: var(--text-bright); margin-top: 1rem;">1. Finalidade Acadêmica</h4>
+        <p>O Portal Conecta DS é um ecossistema educacional mantido pela instituição de ensino para fomentar a aprendizagem prática, circulação de comunicados e aproximação com o mercado de tecnologia.</p>
 
-  <!-- MODAL DESAFIO -->
-  <dialog id="modal-desafio" class="modal">
-    <div class="modal-content">
-      <button class="btn-close" id="close-desafio">&times;</button>
-      <h3>Lançar Novo Desafio / Hackathon</h3>
-      <form id="form-desafio">
-        <label for="desafio-titulo">Nome do Desafio:</label>
-        <input type="text" id="desafio-titulo" required placeholder="Ex: Desafio Web 2026">
-        <label for="desafio-descricao">Regulamento / Instruções:</label>
-        <textarea id="desafio-descricao" rows="4" required></textarea>
-        <label for="desafio-fase">Fase Inicial:</label>
-        <select id="desafio-fase">
-          <option value="inscricoes">Inscrições Abertas</option>
-          <option value="desenvolvimento">Desenvolvimento</option>
-          <option value="avaliacao">Avaliação</option>
-        </select>
-        <label for="desafio-data-insc">Período de Inscrição:</label>
-        <input type="text" id="desafio-data-insc" required placeholder="Ex: 01/10 a 10/10">
-        <label for="desafio-data-fim">Data Final de Entrega:</label>
-        <input type="text" id="desafio-data-fim" required placeholder="Ex: 28/10">
-        <label for="desafio-link">Link do Regulamento Completo (Opcional):</label>
-        <input type="url" id="desafio-link">
-        <button type="submit" class="btn-primary block">Lançar Desafio</button>
-      </form>
+        <h4 style="color: var(--text-bright); margin-top: 1rem;">2. Tratamento de Dados (LGPD - Lei 13.709/2018)</h4>
+        <p>Coletamos nome completo, endereço de e-mail institucional/pessoal e informações profissionais (como links para GitHub e LinkedIn) estritamente para identificação de autoria, atribuição de badges e envio de notificações oficiais do curso.</p>
+
+        <h4 style="color: var(--text-bright); margin-top: 1rem;">3. Vitrine Pública de Projetos</h4>
+        <p>Ao submeter projetos na plataforma, o estudante autoriza a exibição pública de seu nome, tecnologias utilizadas e links de repositório com o objetivo de compor seu portfólio acadêmico.</p>
+
+        <h4 style="color: var(--text-bright); margin-top: 1rem;">4. Código de Conduta e Moderação</h4>
+        <p>É estritamente vedada a publicação de conteúdo ofensivo, discriminatório, plágio ou código malicioso. A instituição reserva-se o direito de moderar, suspender ou banir contas que violem o regimento escolar.</p>
+      </div>
+      <button id="btn-aceitar-termos-fechar" class="btn-primary block">Entendido e Concordar</button>
     </div>
   </dialog>
 

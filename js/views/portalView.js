@@ -27,12 +27,12 @@ export const portalView = {
         <h3 class="card-title">${n.titulo}</h3>
         <p>${n.resumo}</p>
         ${n.prazo ? `<p class="card-meta">📅 Prazo: ${n.prazo}</p>` : ''}
-        ${n.link_acao ? `<div class="card-actions"><a href="${n.link_acao}" target="_blank" class="btn-primary">Ver Ação</a></div>` : ''}
+        ${n.link_acao ? `<div class="card-actions"><a href="${n.link_acao}" target="_blank" rel="noopener noreferrer" class="btn-primary">Ver Ação</a></div>` : ''}
       </article>
     `).join('') || '<p>Nenhum comunicado disponível.</p>';
   },
 
-  renderProjetos(container, projetos, isProfessor) {
+  renderProjetos(container, projetos) {
     container.innerHTML = projetos.map(p => `
       <article class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -43,15 +43,14 @@ export const portalView = {
         <p>${p.descricao}</p>
         <p class="card-meta">Autores: ${p.autores}</p>
         <div class="card-actions">
-          ${p.link_github ? `<a href="${p.link_github}" target="_blank" class="btn-secondary">GitHub</a>` : ''}
-          ${p.link_projeto ? `<a href="${p.link_projeto}" target="_blank" class="btn-primary">Demo</a>` : ''}
-          ${isProfessor && p.status === 'pendente' ? `<button class="btn-primary btn-aprovar-projeto" data-id="${p.id}">Aprovar Projeto</button>` : ''}
+          ${p.link_github ? `<a href="${p.link_github}" target="_blank" rel="noopener noreferrer" class="btn-secondary">GitHub</a>` : ''}
+          ${p.link_projeto ? `<a href="${p.link_projeto}" target="_blank" rel="noopener noreferrer" class="btn-primary">Demo</a>` : ''}
         </div>
       </article>
     `).join('') || '<p>Nenhum projeto cadastrado.</p>';
   },
 
-  renderVagas(container, vagas, isProfessor) {
+  renderVagas(container, vagas) {
     container.innerHTML = vagas.map(v => `
       <article class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -63,11 +62,10 @@ export const portalView = {
         ${v.remuneracao ? `<p class="card-meta">💰 Bolsa/Salário: ${v.remuneracao}</p>` : ''}
         <p class="card-meta">🛠 Requisitos: ${v.tecnologias}</p>
         <div class="card-actions">
-          <a href="${v.link_candidatura}" target="_blank" class="btn-primary">Candidatar-se</a>
-          ${isProfessor && v.status === 'pendente' ? `<button class="btn-primary btn-aprovar-vaga" data-id="${v.id}">Homologar Vaga</button>` : ''}
+          <a href="${v.link_candidatura}" target="_blank" rel="noopener noreferrer" class="btn-primary">Candidatar-se</a>
         </div>
       </article>
-    `).join('') || '<p>Nenhuma oportunidade disponível.</p>';
+    `).join('') || '<p>Nenhuma oportunidade encontrada com os filtros selecionados.</p>';
   },
 
   renderDesafios(container, desafios) {
@@ -78,7 +76,7 @@ export const portalView = {
         <p>${d.descricao}</p>
         <p class="card-meta">📝 Inscrições até: ${d.prazo_inscricao}</p>
         <p class="card-meta">🏁 Encerramento: ${d.prazo_encerramento}</p>
-        ${d.link_edital ? `<div class="card-actions"><a href="${d.link_edital}" target="_blank" class="btn-secondary">Edital Completo</a></div>` : ''}
+        ${d.link_edital ? `<div class="card-actions"><a href="${d.link_edital}" target="_blank" rel="noopener noreferrer" class="btn-secondary">Edital Completo</a></div>` : ''}
       </article>
     `).join('') || '<p>Nenhum desafio aberto.</p>';
   },
@@ -88,6 +86,25 @@ export const portalView = {
     document.getElementById('perfil-role').innerText = perfil.role.toUpperCase();
     document.getElementById('perfil-email').innerText = perfil.email;
     document.getElementById('perfil-bio').innerText = perfil.bio || 'Sem biografia informada.';
+    document.getElementById('perfil-habilidades').innerText = perfil.habilidades || 'Nenhuma competência cadastrada.';
+
+    // Links sociais
+    const githubLink = document.getElementById('perfil-github-link');
+    const linkedinLink = document.getElementById('perfil-linkedin-link');
+
+    if (perfil.github_url) {
+      githubLink.href = perfil.github_url;
+      githubLink.style.display = 'inline-block';
+    } else {
+      githubLink.style.display = 'none';
+    }
+
+    if (perfil.linkedin_url) {
+      linkedinLink.href = perfil.linkedin_url;
+      linkedinLink.style.display = 'inline-block';
+    } else {
+      linkedinLink.style.display = 'none';
+    }
 
     const badgesCard = document.querySelector('.profile-badges-card');
 
@@ -118,15 +135,5 @@ export const portalView = {
         <div class="badge-desc">${c.badges.descricao}</div>
       </div>
     `).join('');
-  },
-
-  renderConvites(container, convites) {
-    container.innerHTML = convites.map(c => `
-      <article class="card">
-        <span class="card-tag">${c.role.toUpperCase()}</span>
-        <h4 style="color:#fff;">${c.email}</h4>
-        <p class="card-meta">Status: ${c.usado ? '✅ Conta Ativada' : '⏳ Aguardando Cadastro'}</p>
-      </article>
-    `).join('') || '<p>Nenhum convite emitido até o momento.</p>';
   }
 };

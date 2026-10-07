@@ -26,10 +26,16 @@ export const authModel = {
   },
 
   async register(email, password, nome) {
+    // Captura dinamicamente a subpasta do GitHub Pages (ex: /conecta-ds/)
+    const urlAtual = window.location.origin + window.location.pathname;
+
     const res = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { nome } }
+      options: {
+        data: { nome },
+        emailRedirectTo: urlAtual
+      }
     });
     if (res.error) throw res.error;
     return res.data;

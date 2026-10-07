@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- TELA DE BLOQUEIO / LOGIN ADMIN (Exibida se não for professor) -->
+  <!-- TELA DE LOGIN ADMIN -->
   <div id="admin-auth-guard" class="auth-guard-screen">
     <div class="auth-card">
       <h2>🔐 Acesso Restrito à Coordenação</h2>
@@ -24,9 +24,8 @@
     </div>
   </div>
 
-  <!-- APLICAÇÃO ADMINISTRATIVA (Exibida após validação de papel) -->
+  <!-- APLICAÇÃO ADMINISTRATIVA -->
   <div id="admin-app" class="admin-layout" style="display: none;">
-    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2>🚀 CONECTA <span>ADMIN</span></h2>
@@ -47,7 +46,6 @@
       </div>
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
     <main class="main-content">
       <!-- 1. DASHBOARD -->
       <section id="view-dashboard" class="admin-view active">
@@ -178,10 +176,10 @@
         </div>
       </section>
 
-      <!-- 6. GESTÃO DE USUÁRIOS -->
+      <!-- 6. USUÁRIOS -->
       <section id="view-usuarios" class="admin-view">
         <div class="top-bar">
-          <h1>Gestão de Perfis & Papéis</h1>
+          <h1>Gestão de Perfis & Disciplinar</h1>
           <input type="text" id="search-usuario" class="input-search" placeholder="🔍 Buscar por nome ou e-mail...">
         </div>
         <div class="table-container">
@@ -190,9 +188,9 @@
               <tr>
                 <th>Nome</th>
                 <th>E-mail</th>
-                <th>Papel Atual</th>
-                <th>Data Cadastro</th>
+                <th>Papel / Status</th>
                 <th>Alterar Papel</th>
+                <th>Ações Disciplinares</th>
               </tr>
             </thead>
             <tbody id="table-usuarios-body"></tbody>
@@ -234,7 +232,6 @@
     </main>
   </div>
 
-  <!-- MODAL GENÉRICO PARA CRUD -->
   <dialog id="admin-modal" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="admin-modal-close">&times;</button>

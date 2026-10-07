@@ -22,10 +22,10 @@ body { background-color: var(--bg-color); color: var(--text-main); min-height: 1
 }
 .logo { font-size: 1.25rem; font-weight: 800; color: var(--text-bright); }
 .logo span { color: var(--accent); }
-.nav-links { display: flex; gap: 0.35rem; }
+.nav-links { display: flex; gap: 0.35rem; align-items: center; }
 .nav-btn {
   background: transparent; border: none; color: var(--text-main);
-  padding: 0.5rem 0.85rem; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 0.9rem;
+  padding: 0.5rem 0.85rem; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 0.9rem; text-decoration: none;
 }
 .nav-btn.active, .nav-btn:hover { background-color: var(--border-color); color: var(--text-bright); }
 .nav-admin { border: 1px dashed var(--accent); color: var(--accent); }
@@ -93,4 +93,25 @@ form input, form select, form textarea { width: 100%; padding: 0.6rem; backgroun
 @media (max-width: 768px) {
   .feed-grid, .profile-layout { grid-template-columns: 1fr; }
   .navbar { flex-direction: column; gap: 0.8rem; }
+}
+
+/* BUSCA POR STACK NO MURAL DE VAGAS */
+.input-search-stack {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-bright);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  flex: 1;
+  max-width: 380px;
+}
+.input-search-stack:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* LINKS DE REDES DO PERFIL */
+.profile-social-links a {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
 }
