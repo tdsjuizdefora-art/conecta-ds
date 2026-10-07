@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backoffice Gestão | Conecta DS</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- TELA DE BLOQUEIO / LOGIN ADMIN (Exibida se não for professor) -->
+  <div id="admin-auth-guard" class="auth-guard-screen">
+    <div class="auth-card">
+      <h2>🔐 Acesso Restrito à Coordenação</h2>
+      <p>Esta área é exclusiva para o corpo docente e equipe de gestão do Conecta DS.</p>
+      <form id="admin-login-form">
+        <label>E-mail institucional:</label>
+        <input type="email" id="admin-email" required placeholder="professor@escola.br">
+        <label>Senha:</label>
+        <input type="password" id="admin-pass" required placeholder="••••••••">
+        <button type="submit" class="btn-primary block">Entrar no Backoffice</button>
+      </form>
+      <a href="index.html" class="link-back">← Voltar para o Portal do Estudante</a>
+    </div>
+  </div>
+
+  <!-- APLICAÇÃO ADMINISTRATIVA (Exibida após validação de papel) -->
+  <div id="admin-app" class="admin-layout" style="display: none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>🚀 CONECTA <span>ADMIN</span></h2>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">📊 Visão Geral</button>
+        <button class="nav-item" data-view="projetos">💻 Moderação de Projetos</button>
+        <button class="nav-item" data-view="vagas">💼 Mural de Vagas</button>
+        <button class="nav-item" data-view="noticias">📢 Comunicados Oficiais</button>
+        <button class="nav-item" data-view="desafios">🏆 Desafios & Eventos</button>
+        <button class="nav-item" data-view="usuarios">👥 Gestão de Usuários</button>
+        <button class="nav-item" data-view="convites">🎟️ Convites Institucionais</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="prof-info" class="prof-info">-</div>
+        <button id="btn-admin-logout" class="btn-secondary block">Encerrar Sessão</button>
+        <a href="index.html" target="_blank" class="link-portal">Abrir Portal Público ↗</a>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+      <!-- 1. DASHBOARD -->
+      <section id="view-dashboard" class="admin-view active">
+        <div class="top-bar">
+          <h1>Painel de Controle Geral</h1>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-icon">👥</span>
+            <div>
+              <h3 id="metric-usuarios">0</h3>
+              <p>Total de Usuários</p>
+            </div>
+          </div>
+          <div class="metric-card alert">
+            <span class="metric-icon">⚠️</span>
+            <div>
+              <h3 id="metric-proj-pendentes">0</h3>
+              <p>Projetos Pendentes</p>
+            </div>
+          </div>
+          <div class="metric-card warning">
+            <span class="metric-icon">💼</span>
+            <div>
+              <h3 id="metric-vagas-pendentes">0</h3>
+              <p>Vagas em Análise</p>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-icon">📢</span>
+            <div>
+              <h3 id="metric-noticias">0</h3>
+              <p>Avisos Publicados</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PROJETOS -->
+      <section id="view-projetos" class="admin-view">
+        <div class="top-bar">
+          <h1>Moderação de Projetos dos Alunos</h1>
+          <div class="filter-group">
+            <button class="btn-filter active" data-filter="todos">Todos</button>
+            <button class="btn-filter" data-filter="pendente">Pendentes</button>
+            <button class="btn-filter" data-filter="aprovado">Aprovados</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Alunos</th>
+                <th>Tecnologias</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-projetos-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. VAGAS -->
+      <section id="view-vagas" class="admin-view">
+        <div class="top-bar">
+          <h1>Mural de Carreiras & Oportunidades</h1>
+          <button id="btn-nova-vaga" class="btn-primary">+ Cadastrar Vaga</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Título da Vaga</th>
+                <th>Empresa</th>
+                <th>Modalidade</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-vagas-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. NOTÍCIAS -->
+      <section id="view-noticias" class="admin-view">
+        <div class="top-bar">
+          <h1>Gestão de Comunicados Oficiais</h1>
+          <button id="btn-nova-noticia" class="btn-primary">+ Novo Comunicado</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Prazo</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-noticias-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. DESAFIOS -->
+      <section id="view-desafios" class="admin-view">
+        <div class="top-bar">
+          <h1>Hackathons e Desafios</h1>
+          <button id="btn-novo-desafio" class="btn-primary">+ Novo Desafio</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome do Desafio</th>
+                <th>Fase Atual</th>
+                <th>Inscrições</th>
+                <th>Encerramento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-desafios-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 6. GESTÃO DE USUÁRIOS -->
+      <section id="view-usuarios" class="admin-view">
+        <div class="top-bar">
+          <h1>Gestão de Perfis & Papéis</h1>
+          <input type="text" id="search-usuario" class="input-search" placeholder="🔍 Buscar por nome ou e-mail...">
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Papel Atual</th>
+                <th>Data Cadastro</th>
+                <th>Alterar Papel</th>
+              </tr>
+            </thead>
+            <tbody id="table-usuarios-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 7. CONVITES -->
+      <section id="view-convites" class="admin-view">
+        <div class="top-bar">
+          <h1>Convites para Professores e Empresas</h1>
+        </div>
+        <div class="card inline-form">
+          <h3>Emitir Novo Convite</h3>
+          <form id="form-admin-convite">
+            <input type="email" id="convite-email-input" required placeholder="email@instituicao.br ou rh@empresa.com">
+            <select id="convite-role-input">
+              <option value="professor">Professor / Coordenador</option>
+              <option value="empresa">Empresa Parceira</option>
+            </select>
+            <button type="submit" class="btn-primary">Gerar Convite</button>
+          </form>
+        </div>
+        <div class="table-container" style="margin-top: 1.5rem;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>E-mail Convidado</th>
+                <th>Papel Concedido</th>
+                <th>Situação</th>
+                <th>Link de Ativação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-convites-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL GENÉRICO PARA CRUD -->
+  <dialog id="admin-modal" class="modal">
+    <div class="modal-content">
+      <button class="btn-close" id="admin-modal-close">&times;</button>
+      <h3 id="admin-modal-title">Título do Modal</h3>
+      <div id="admin-modal-body"></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
