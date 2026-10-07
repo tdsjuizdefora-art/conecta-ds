@@ -2,29 +2,31 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Backoffice Gestão | Conecta DS</title>
   <link rel="stylesheet" href="css/admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- TELA DE LOGIN ADMIN -->
+  <!-- TELA DE LOGIN ADMIN (GUARD DE ACESSO) -->
   <div id="admin-auth-guard" class="auth-guard-screen">
     <div class="auth-card">
       <h2>🔐 Acesso Restrito à Coordenação</h2>
       <p>Esta área é exclusiva para o corpo docente e equipe de gestão do Conecta DS.</p>
       <form id="admin-login-form">
-        <label>E-mail institucional:</label>
+        <label for="admin-email">E-mail institucional:</label>
         <input type="email" id="admin-email" required placeholder="professor@escola.br">
-        <label>Senha:</label>
+
+        <label for="admin-pass">Senha:</label>
         <input type="password" id="admin-pass" required placeholder="••••••••">
+
         <button type="submit" class="btn-primary block">Entrar no Backoffice</button>
       </form>
       <a href="index.html" class="link-back">← Voltar para o Portal do Estudante</a>
     </div>
   </div>
 
-  <!-- APLICAÇÃO ADMINISTRATIVA -->
+  <!-- APLICAÇÃO ADMINISTRATIVA COMPLETA -->
   <div id="admin-app" class="admin-layout" style="display: none;">
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -176,7 +178,7 @@
         </div>
       </section>
 
-      <!-- 6. USUÁRIOS -->
+      <!-- 6. GESTÃO DISCIPLINAR DE USUÁRIOS -->
       <section id="view-usuarios" class="admin-view">
         <div class="top-bar">
           <h1>Gestão de Perfis & Disciplinar</h1>
@@ -232,6 +234,7 @@
     </main>
   </div>
 
+  <!-- MODAL GENÉRICO DO BACKOFFICE -->
   <dialog id="admin-modal" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="admin-modal-close">&times;</button>

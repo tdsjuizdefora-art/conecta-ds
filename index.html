@@ -2,14 +2,24 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Portal Conecta DS | Hub de Tecnologia</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+  <!-- CABEÇALHO COM ESTRUTURA BLINDADA CONTRA CORTES NO MOBILE -->
   <header class="navbar">
-    <div class="logo">🚀 CONECTA <span>DS</span></div>
+    <div class="nav-top-row">
+      <a href="#" class="logo">🚀 CONECTA <span>DS</span></a>
+      <div class="user-area">
+        <div id="notif-badge" class="notif-badge" title="Clique para ver os comunicados recentes">
+          🔔 <span id="notif-count">0</span>
+        </div>
+        <div id="auth-actions"></div>
+      </div>
+    </div>
+    
     <nav class="nav-links">
       <button class="nav-btn active" data-tab="feed">🏠 Início</button>
       <button class="nav-btn" data-tab="noticias">📢 Notícias</button>
@@ -17,17 +27,11 @@
       <button class="nav-btn" data-tab="vagas">💼 Oportunidades</button>
       <button class="nav-btn" data-tab="desafios">🏆 Desafios</button>
       <button class="nav-btn" data-tab="perfil" id="tab-btn-perfil" style="display: none;">👤 Meu Perfil</button>
-      <a href="admin.html" class="nav-btn nav-admin" id="link-admin-panel" style="display: none;">⚙️ Backoffice Gestão</a>
+      <a href="admin.html" class="nav-btn nav-admin" id="link-admin-panel" style="display: none;">⚙️ Backoffice</a>
     </nav>
-    <div class="user-area">
-      <!-- SINO INTERATIVO -->
-      <div id="notif-badge" class="notif-badge" title="Clique para ver os comunicados recentes">
-        🔔 <span id="notif-count">0</span>
-      </div>
-      <div id="auth-actions"></div>
-    </div>
   </header>
 
+  <!-- CONTEÚDO PRINCIPAL (SPA) -->
   <main class="main-container">
     <!-- ABA 1: FEED -->
     <section id="section-feed" class="tab-content active">
@@ -38,11 +42,11 @@
       <div class="feed-grid">
         <div class="feed-column">
           <h3 class="feed-section-title">📢 Comunicados Oficiais</h3>
-          <div id="feed-noticias" class="compact-list"><p class="loading">Carregando...</p></div>
+          <div id="feed-noticias" class="compact-list"><p class="loading">Carregando avisos...</p></div>
         </div>
         <div class="feed-column">
           <h3 class="feed-section-title">💼 Oportunidades em Aberto</h3>
-          <div id="feed-vagas" class="compact-list"><p class="loading">Carregando...</p></div>
+          <div id="feed-vagas" class="compact-list"><p class="loading">Carregando vagas...</p></div>
         </div>
       </div>
     </section>
@@ -52,7 +56,7 @@
       <div class="section-header">
         <h2>Comunicação Institucional</h2>
       </div>
-      <div id="noticias-list" class="grid-cards"><p class="loading">Carregando...</p></div>
+      <div id="noticias-list" class="grid-cards"><p class="loading">Carregando comunicados...</p></div>
     </section>
 
     <!-- ABA 3: VITRINE DE PROJETOS -->
@@ -61,10 +65,10 @@
         <h2>Vitrine de Projetos dos Estudantes</h2>
         <button id="btn-open-proj-modal" class="btn-primary">+ Submeter Projeto</button>
       </div>
-      <div id="projetos-list" class="grid-cards"><p class="loading">Carregando...</p></div>
+      <div id="projetos-list" class="grid-cards"><p class="loading">Carregando vitrine...</p></div>
     </section>
 
-    <!-- ABA 4: VAGAS COM FILTRO DUPLO (TIPO + STACK) -->
+    <!-- ABA 4: VAGAS (COM FILTRO DUPLO: MODALIDADE + STACK) -->
     <section id="section-vagas" class="tab-content">
       <div class="section-header">
         <h2>Mural de Carreiras & Estágios</h2>
@@ -80,7 +84,7 @@
         </select>
         <input type="text" id="filtro-vaga-stack" class="input-search-stack" placeholder="🔍 Filtrar tecnologia (ex: React, Python, SQL)...">
       </div>
-      <div id="vagas-list" class="grid-cards"><p class="loading">Carregando...</p></div>
+      <div id="vagas-list" class="grid-cards"><p class="loading">Carregando oportunidades...</p></div>
     </section>
 
     <!-- ABA 5: DESAFIOS -->
@@ -88,10 +92,10 @@
       <div class="section-header">
         <h2>Desafios & Hackathons</h2>
       </div>
-      <div id="desafios-list" class="grid-cards"><p class="loading">Carregando...</p></div>
+      <div id="desafios-list" class="grid-cards"><p class="loading">Carregando desafios...</p></div>
     </section>
 
-    <!-- ABA 6: MEU PERFIL (COM BOTÃO DE EDIÇÃO) -->
+    <!-- ABA 6: MEU PERFIL (COM EDIÇÃO E REDES SOCIAIS) -->
     <section id="section-perfil" class="tab-content">
       <div class="section-header">
         <h2>Meu Perfil Acadêmico & Conquistas</h2>
@@ -107,7 +111,7 @@
           <p id="perfil-bio">-</p>
           <h4 style="margin-top: 0.8rem;">Competências Técnicas:</h4>
           <p id="perfil-habilidades" class="card-tag">-</p>
-          <div class="profile-social-links" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+          <div class="profile-social-links" style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <a id="perfil-github-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">GitHub</a>
             <a id="perfil-linkedin-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">LinkedIn</a>
           </div>
@@ -123,7 +127,7 @@
 
   <!-- ==================== MODAIS ==================== -->
 
-  <!-- MODAL AUTH -->
+  <!-- MODAL 1: AUTENTICAÇÃO COM LGPD -->
   <dialog id="modal-auth" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-auth">&times;</button>
@@ -158,7 +162,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL EDITAR MEU PERFIL (RESTABELECIDO) -->
+  <!-- MODAL 2: EDITAR MEU PERFIL (ESTUDANTE) -->
   <dialog id="modal-edit-perfil" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-edit-perfil">&times;</button>
@@ -170,7 +174,7 @@
         <label for="mep-bio">Biografia / Sobre Você:</label>
         <textarea id="mep-bio" rows="3" placeholder="Fale brevemente sobre sua trajetória e interesses..."></textarea>
 
-        <label for="mep-habilidades">Competências (separadas por vírgula):</label>
+        <label for="mep-habilidades">Competências Técnicas (separadas por vírgula):</label>
         <input type="text" id="mep-habilidades" placeholder="Ex: HTML, CSS, JavaScript, React, SQL">
 
         <label for="mep-github">Link do seu GitHub:</label>
@@ -184,7 +188,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL PROJETO -->
+  <!-- MODAL 3: SUBMETER PROJETO NA VITRINE -->
   <dialog id="modal-projeto" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-projeto">&times;</button>
@@ -192,22 +196,28 @@
       <form id="form-projeto">
         <label for="proj-titulo">Título:</label>
         <input type="text" id="proj-titulo" required placeholder="Ex: Sistema de Gestão Escolar">
+
         <label for="proj-descricao">Descrição:</label>
         <textarea id="proj-descricao" rows="3" required></textarea>
+
         <label for="proj-tecnologias">Tecnologias Utilizadas:</label>
         <input type="text" id="proj-tecnologias" required placeholder="Ex: HTML, CSS, JS, Supabase">
+
         <label for="proj-autores">Alunos Desenvolvedores:</label>
         <input type="text" id="proj-autores" required placeholder="Ex: Beatriz e Gabriel">
+
         <label for="proj-github">Repositório GitHub:</label>
         <input type="url" id="proj-github" placeholder="https://github.com/...">
+
         <label for="proj-demo">Deploy / Link Online:</label>
         <input type="url" id="proj-demo" placeholder="https://...">
+
         <button type="submit" class="btn-primary block">Enviar para Avaliação</button>
       </form>
     </div>
   </dialog>
 
-  <!-- MODAL VAGA -->
+  <!-- MODAL 4: DIVULGAR OPORTUNIDADE/VAGA -->
   <dialog id="modal-vaga" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-vaga">&times;</button>
@@ -215,10 +225,13 @@
       <form id="form-vaga">
         <label for="vaga-titulo">Título da Vaga:</label>
         <input type="text" id="vaga-titulo" required placeholder="Ex: Estágio Front-end">
+
         <label for="vaga-empresa">Nome da Empresa:</label>
         <input type="text" id="vaga-empresa" required placeholder="Ex: Tech Solutions">
+
         <label for="vaga-localizacao">Local / Regime:</label>
         <input type="text" id="vaga-localizacao" required placeholder="Ex: Remoto ou Juiz de Fora">
+
         <label for="vaga-tipo">Tipo de Contratação:</label>
         <select id="vaga-tipo">
           <option value="Estágio">Estágio</option>
@@ -226,18 +239,22 @@
           <option value="Freelance">Freelance</option>
           <option value="Aprendiz">Aprendiz</option>
         </select>
+
         <label for="vaga-remuneracao">Remuneração / Bolsa (Opcional):</label>
         <input type="text" id="vaga-remuneracao" placeholder="Ex: R$ 1.500,00 + VT">
+
         <label for="vaga-tecnologias">Requisitos Técnicos:</label>
         <input type="text" id="vaga-tecnologias" required placeholder="Ex: JavaScript, Git">
+
         <label for="vaga-link">Link ou E-mail para Candidatura:</label>
         <input type="text" id="vaga-link" required placeholder="https://... ou vagas@empresa.com">
+
         <button type="submit" class="btn-primary block">Submeter Vaga</button>
       </form>
     </div>
   </dialog>
 
-  <!-- MODAL LGPD -->
+  <!-- MODAL 5: TERMOS LEGAIS E LGPD -->
   <dialog id="modal-termos" class="modal" style="max-width: 650px;">
     <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
       <button class="btn-close" id="close-termos">&times;</button>

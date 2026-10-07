@@ -49,17 +49,18 @@ export const portalController = {
       tabPerfil.style.display = 'inline-block';
       if (isProfessor) linkAdmin.style.display = 'inline-block';
 
+      // Usa a classe .user-pill-name para truncar nomes longos no celular
       authActions.innerHTML = `
-        <span style="font-size:0.85rem; color:#fff; font-weight:600;">
-          ${this.currentSession.perfil?.nome} (${this.currentSession.perfil?.role})
-        </span>
-        <button id="btn-logout" class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;">Sair</button>
-      `;
+		<span class="user-pill-name" title="${this.currentSession.perfil?.nome}">
+		  ${this.currentSession.perfil?.nome}
+		</span>
+		<button id="btn-logout" class="btn-secondary" style="padding: 0.35rem 0.65rem; min-height: 36px; font-size: 0.75rem;">Sair</button>
+	  `;
       document.getElementById('feed-greeting').innerText = `Olá, ${this.currentSession.perfil?.nome}! 👋`;
     } else {
       tabPerfil.style.display = 'none';
       linkAdmin.style.display = 'none';
-      authActions.innerHTML = `<button id="btn-open-login" class="btn-primary">Entrar</button>`;
+      authActions.innerHTML = `<button id="btn-open-login" class="btn-primary" style="min-height: 36px; padding: 0.35rem 0.85rem; font-size: 0.85rem;">Entrar</button>`;
     }
   },
 
