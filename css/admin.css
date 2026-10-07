@@ -1,10 +1,10 @@
 /* ==========================================================================
-   BACKOFFICE — DESIGN SYSTEM UNIFICADO (COM SCROLL FLUIDO NO CELULAR)
+   BACKOFFICE — DESIGN SYSTEM DEFINITIVO (ZERO BLUR, SCROLL NATIVO)
    ========================================================================== */
 
 :root {
   --bg-base: #030712;
-  --bg-sidebar: #0b111e;
+  --bg-sidebar: #090e1a;
   --bg-surface: #0f172a;
   --bg-input: #090e17;
 
@@ -46,10 +46,9 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   min-height: 100dvh;
-  /* Remove a trava fixa que quebrava no celular */
 }
 
-/* TELA DE LOGIN DO ADMIN */
+/* LOGIN ADMIN */
 .auth-guard-screen {
   display: flex;
   align-items: center;
@@ -109,91 +108,163 @@ body {
   text-decoration: none;
 }
 
-/* LAYOUT DO BACKOFFICE */
+/* LAYOUT PRINCIPAL */
 .admin-layout {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
 }
 
+/* CABEÇALHO COM LOGOUT PERMANENTE */
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: #090e1a;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  height: 56px;
+}
+
 @media (min-width: 900px) {
-  .admin-layout {
-    flex-direction: row;
-    height: 100dvh;
-    overflow: hidden;
+  .admin-topbar {
+    padding: 0.65rem 1.5rem;
   }
 }
 
-/* SIDEBAR RESPONSIVA (HORIZONTAL NO CELULAR / VERTICAL NO DESKTOP) */
-.sidebar {
-  width: 100%;
-  background: var(--bg-sidebar);
-  border-bottom: 1px solid var(--border);
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-logo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.admin-logo span {
+  color: var(--accent);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prof-tag {
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.btn-logout-header {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 36px;
+}
+
+.btn-logout-header:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* CORPO DO ADMIN */
+.admin-body {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* SIDEBAR / DRAWER NO CELULAR */
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: -290px;
+  width: 280px;
+  height: 100vh;
+  height: 100dvh;
+  background: #090e1a;
+  border-right: 1px solid var(--border);
+  z-index: 999;
+  /* NA FRENTE DO BACKDROP */
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  padding: 1.25rem 1rem;
+  transition: left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+}
+
+.admin-sidebar.open {
+  left: 0;
 }
 
 @media (min-width: 900px) {
-  .sidebar {
-    width: 260px;
-    border-bottom: none;
-    border-right: 1px solid var(--border);
-    height: 100dvh;
+  .admin-sidebar {
+    position: static;
+    width: 250px;
+    height: calc(100dvh - 56px);
+    box-shadow: none;
+    transition: none;
+    padding: 1rem 0.75rem;
+    z-index: auto;
   }
 }
 
 .sidebar-header {
-  padding: 0.85rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.85rem;
   border-bottom: 1px solid var(--border);
-}
-
-.sidebar-header h2 {
-  font-size: 1.1rem;
+  font-weight: 700;
   color: #fff;
-  font-weight: 800;
-}
-
-.sidebar-header h2 span {
-  color: var(--accent);
 }
 
 .sidebar-nav {
   display: flex;
-  overflow-x: auto;
-  padding: 0.4rem;
+  flex-direction: column;
   gap: 0.35rem;
-  scrollbar-width: none;
-  min-width: 0;
-  -webkit-overflow-scrolling: touch;
-}
-
-.sidebar-nav::-webkit-scrollbar {
-  display: none;
-}
-
-@media (min-width: 900px) {
-  .sidebar-nav {
-    flex-direction: column;
-    padding: 1rem 0.75rem;
-    overflow-y: auto;
-    flex: 1;
-  }
+  flex: 1;
+  overflow-y: auto;
 }
 
 .nav-item {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 0.55rem 0.85rem;
+  padding: 0.65rem 0.85rem;
   border-radius: var(--radius-md);
   text-align: left;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   min-height: 40px;
-  flex-shrink: 0;
 }
 
 .nav-item:hover,
@@ -203,31 +274,17 @@ body {
 }
 
 .sidebar-footer {
-  padding: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-}
-
-@media (max-width: 899px) {
-  .sidebar-footer {
-    display: none;
-  }
-}
-
-.prof-info {
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.85rem;
+  margin-top: auto;
 }
 
 .link-portal {
   color: var(--accent);
   text-decoration: none;
+  font-size: 0.85rem;
+  display: block;
   text-align: center;
-  font-size: 0.8rem;
 }
 
 /* ÁREA DE CONTEÚDO */
@@ -253,6 +310,18 @@ body {
   animation: fadeIn 0.15s ease-out;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .top-bar {
   display: flex;
   flex-direction: column;
@@ -274,7 +343,7 @@ body {
   font-weight: 700;
 }
 
-/* CARDS DE MÉTRICAS */
+/* MÉTRICAS */
 .metrics-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -326,7 +395,7 @@ body {
   border-left: 4px solid var(--warning);
 }
 
-/* TABELAS COM SCROLL ISOLADO */
+/* TABELAS */
 .table-container {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -342,7 +411,6 @@ body {
   font-size: 0.85rem;
   text-align: left;
   min-width: 640px;
-  /* Impede esmagamento de colunas */
 }
 
 .data-table th,
@@ -361,7 +429,6 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* BADGES DE STATUS */
 .status-badge {
   padding: 0.15rem 0.45rem;
   border-radius: var(--radius-sm);
@@ -430,6 +497,55 @@ body {
   font-size: 0.8rem;
 }
 
+.btn-hamburger {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-hamburger .bar {
+  width: 18px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.btn-close-drawer {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+/* MÁSCARA ESCURA SEM BLUR */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 .input-search {
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -467,7 +583,6 @@ body {
   font-weight: 700;
 }
 
-/* MODAL */
 .modal {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -480,7 +595,6 @@ body {
 
 .modal::backdrop {
   background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(6px);
 }
 
 .modal-content {
@@ -523,4 +637,24 @@ body {
   color: #fff;
   border-radius: var(--radius-md);
   min-height: 42px;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .desktop-only {
+    display: flex;
+  }
+}
+
+.mobile-only {
+  display: flex;
+}
+
+@media (min-width: 900px) {
+  .mobile-only {
+    display: none !important;
+  }
 }

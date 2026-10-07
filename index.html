@@ -8,28 +8,64 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- CABEÇALHO COM ESTRUTURA BLINDADA CONTRA CORTES NO MOBILE -->
+  <!-- CABEÇALHO -->
   <header class="navbar">
-    <div class="nav-top-row">
+    <div class="nav-container">
       <a href="#" class="logo">🚀 CONECTA <span>DS</span></a>
-      <div class="user-area">
-        <div id="notif-badge" class="notif-badge" title="Clique para ver os comunicados recentes">
+
+      <!-- MENU DESKTOP EM LINHA -->
+      <nav class="desktop-nav desktop-only">
+        <button class="nav-btn active" data-tab="feed">🏠 Início</button>
+        <button class="nav-btn" data-tab="noticias">📢 Notícias</button>
+        <button class="nav-btn" data-tab="projetos">💻 Vitrine</button>
+        <button class="nav-btn" data-tab="vagas">💼 Oportunidades</button>
+        <button class="nav-btn" data-tab="desafios">🏆 Desafios</button>
+        <button class="nav-btn tab-btn-perfil" data-tab="perfil" style="display: none;">👤 Meu Perfil</button>
+        <a href="admin.html" class="nav-btn nav-admin link-admin-panel" style="display: none;">⚙️ Backoffice</a>
+      </nav>
+
+      <div class="nav-right">
+        <!-- SINO DE NOTIFICAÇÕES -->
+        <div id="notif-badge" class="notif-badge" title="Clique para ver os comunicados">
           🔔 <span id="notif-count">0</span>
         </div>
-        <div id="auth-actions"></div>
+
+        <!-- AÇÕES DE LOGIN / LOGOUT NO DESKTOP -->
+        <div id="auth-actions" class="desktop-only"></div>
+
+        <!-- BOTÃO HAMBÚRGUER NO CELULAR -->
+        <button id="btn-toggle-menu" class="btn-hamburger mobile-only" aria-label="Abrir Menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
       </div>
     </div>
-    
-    <nav class="nav-links">
+  </header>
+
+  <!-- MÁSCARA ESCURA INDEPENDENTE (SEM BLUR QUE EMBAÇA) -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- GAVETA LATERAL MOBILE (NÍVEL RAIZ: 100% NÍTIDA E CRISTALINA) -->
+  <aside id="nav-drawer" class="nav-drawer mobile-only">
+    <div class="drawer-header">
+      <span>Navegação do Portal</span>
+      <button id="btn-close-drawer" class="btn-close-drawer">&times;</button>
+    </div>
+
+    <div class="drawer-links">
       <button class="nav-btn active" data-tab="feed">🏠 Início</button>
       <button class="nav-btn" data-tab="noticias">📢 Notícias</button>
       <button class="nav-btn" data-tab="projetos">💻 Vitrine</button>
       <button class="nav-btn" data-tab="vagas">💼 Oportunidades</button>
       <button class="nav-btn" data-tab="desafios">🏆 Desafios</button>
-      <button class="nav-btn" data-tab="perfil" id="tab-btn-perfil" style="display: none;">👤 Meu Perfil</button>
-      <a href="admin.html" class="nav-btn nav-admin" id="link-admin-panel" style="display: none;">⚙️ Backoffice</a>
-    </nav>
-  </header>
+      <button class="nav-btn tab-btn-perfil" data-tab="perfil" style="display: none;">👤 Meu Perfil</button>
+      <a href="admin.html" class="nav-btn nav-admin link-admin-panel" style="display: none;">⚙️ Backoffice Gestão</a>
+    </div>
+
+    <!-- AÇÕES DE USUÁRIO DENTRO DA GAVETA MOBILE -->
+    <div id="drawer-auth-actions" class="drawer-auth"></div>
+  </aside>
 
   <!-- CONTEÚDO PRINCIPAL (SPA) -->
   <main class="main-container">
@@ -95,10 +131,10 @@
       <div id="desafios-list" class="grid-cards"><p class="loading">Carregando desafios...</p></div>
     </section>
 
-    <!-- ABA 6: MEU PERFIL (COM EDIÇÃO E REDES SOCIAIS) -->
+    <!-- ABA 6: MEU PERFIL (COM EDIÇÃO E LOGOUT REDUNDANTE) -->
     <section id="section-perfil" class="tab-content">
       <div class="section-header">
-        <h2>Meu Perfil Acadêmico & Conquistas</h2>
+        <h2>Meu Perfil Acadêmico</h2>
         <button id="btn-open-edit-perfil" class="btn-secondary">✏️ Editar Meus Dados</button>
       </div>
       <div class="profile-layout">
@@ -115,7 +151,13 @@
             <a id="perfil-github-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">GitHub</a>
             <a id="perfil-linkedin-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: none;">LinkedIn</a>
           </div>
+
+          <!-- BOTÃO FIXO DE SAIR DENTRO DO PERFIL -->
+          <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+            <button id="btn-logout-perfil" class="btn-danger block">🚪 Encerrar Sessão</button>
+          </div>
         </div>
+
         <div class="card profile-badges-card">
           <h3>Conquistas & Reconhecimentos</h3>
           <p class="card-meta">Insígnias atribuídas automaticamente ao aprovar projetos e desafios.</p>
@@ -127,7 +169,7 @@
 
   <!-- ==================== MODAIS ==================== -->
 
-  <!-- MODAL 1: AUTENTICAÇÃO COM LGPD -->
+  <!-- MODAL AUTH COM LGPD -->
   <dialog id="modal-auth" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-auth">&times;</button>
@@ -162,7 +204,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL 2: EDITAR MEU PERFIL (ESTUDANTE) -->
+  <!-- MODAL EDITAR PERFIL -->
   <dialog id="modal-edit-perfil" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-edit-perfil">&times;</button>
@@ -188,7 +230,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL 3: SUBMETER PROJETO NA VITRINE -->
+  <!-- MODAL SUBMETER PROJETO -->
   <dialog id="modal-projeto" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-projeto">&times;</button>
@@ -217,7 +259,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL 4: DIVULGAR OPORTUNIDADE/VAGA -->
+  <!-- MODAL DIVULGAR VAGA -->
   <dialog id="modal-vaga" class="modal">
     <div class="modal-content">
       <button class="btn-close" id="close-vaga">&times;</button>
@@ -254,7 +296,7 @@
     </div>
   </dialog>
 
-  <!-- MODAL 5: TERMOS LEGAIS E LGPD -->
+  <!-- MODAL TERMOS LGPD -->
   <dialog id="modal-termos" class="modal" style="max-width: 650px;">
     <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
       <button class="btn-close" id="close-termos">&times;</button>

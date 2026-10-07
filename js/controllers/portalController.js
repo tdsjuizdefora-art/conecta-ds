@@ -27,6 +27,7 @@ export const portalController = {
     this.configurarNavbar(isProfessor);
     await this.carregarDados();
     this.configurarEventosUI();
+    this.configurarDrawerMobile();
     this.iniciarRealtime();
   },
 
@@ -42,26 +43,66 @@ export const portalController = {
 
   configurarNavbar(isProfessor) {
     const authActions = document.getElementById('auth-actions');
-    const tabPerfil = document.getElementById('tab-btn-perfil');
-    const linkAdmin = document.getElementById('link-admin-panel');
+    const drawerAuth = document.getElementById('drawer-auth-actions');
+
+    // Ativa visibilidade no desktop e na gaveta mobile
+    document.querySelectorAll('.tab-btn-perfil').forEach(el => {
+      el.style.display = this.currentSession ? 'flex' : 'none';
+    });
+
+    document.querySelectorAll('.link-admin-panel').forEach(el => {
+      el.style.display = (this.currentSession && isProfessor) ? 'flex' : 'none';
+    });
 
     if (this.currentSession) {
-      tabPerfil.style.display = 'inline-block';
-      if (isProfessor) linkAdmin.style.display = 'inline-block';
+      const authContent = `
+        <span class="user-pill-name" title="${this.currentSession.perfil?.nome}">
+          ${this.currentSession.perfil?.nome}
+        </span>
+        <button class="btn-logout-trigger btn-secondary" style="padding: 0.35rem 0.65rem; min-height: 36px; font-size: 0.75rem;">Sair</button>
+      `;
 
-      // Usa a classe .user-pill-name para truncar nomes longos no celular
-      authActions.innerHTML = `
-		<span class="user-pill-name" title="${this.currentSession.perfil?.nome}">
-		  ${this.currentSession.perfil?.nome}
-		</span>
-		<button id="btn-logout" class="btn-secondary" style="padding: 0.35rem 0.65rem; min-height: 36px; font-size: 0.75rem;">Sair</button>
-	  `;
-      document.getElementById('feed-greeting').innerText = `Olá, ${this.currentSession.perfil?.nome}! 👋`;
+      if (authActions) authActions.innerHTML = authContent;
+      if (drawerAuth) {
+        drawerAuth.innerHTML = `
+          <div style="font-size:0.85rem; color:#fff; font-weight:600; margin-bottom: 0.5rem;">
+            ${this.currentSession.perfil?.nome} (${this.currentSession.perfil?.role})
+          </div>
+          <button class="btn-logout-trigger btn-danger block" style="min-height: 40px;">🚪 Sair da Conta</button>
+        `;
+      }
+
+      const greeting = document.getElementById('feed-greeting');
+      if (greeting) greeting.innerText = `Olá, ${this.currentSession.perfil?.nome}! 👋`;
     } else {
-      tabPerfil.style.display = 'none';
-      linkAdmin.style.display = 'none';
-      authActions.innerHTML = `<button id="btn-open-login" class="btn-primary" style="min-height: 36px; padding: 0.35rem 0.85rem; font-size: 0.85rem;">Entrar</button>`;
+      if (authActions) authActions.innerHTML = `<button id="btn-open-login" class="btn-primary" style="min-height: 36px; padding: 0.35rem 0.85rem; font-size: 0.85rem;">Entrar</button>`;
+      if (drawerAuth) drawerAuth.innerHTML = `<button id="btn-open-login-drawer" class="btn-primary block">Entrar na Conta</button>`;
     }
+  },
+
+  configurarDrawerMobile() {
+    const drawer = document.getElementById('nav-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const btnToggle = document.getElementById('btn-toggle-menu');
+    const btnClose = document.getElementById('btn-close-drawer');
+
+    const abrir = () => {
+      drawer?.classList.add('open');
+      backdrop?.classList.add('active');
+    };
+
+    const fechar = () => {
+      drawer?.classList.remove('open');
+      backdrop?.classList.remove('active');
+    };
+
+    btnToggle?.addEventListener('click', abrir);
+    btnClose?.addEventListener('click', fechar);
+    backdrop?.addEventListener('click', fechar);
+
+    document.querySelectorAll('.drawer-links .nav-btn').forEach(btn => {
+      btn.addEventListener('click', fechar);
+    });
   },
 
   async carregarDados() {
@@ -91,7 +132,7 @@ export const portalController = {
   },
 
   configurarEventosUI() {
-    // 1. Alternância de Abas
+    // 1. Navegação de Abas
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         if (!btn.dataset.tab) return;
@@ -99,14 +140,14 @@ export const portalController = {
       });
     });
 
-    // 2. Clique no Sino de Notificações 🔔 (Leva às notícias e zera o contador)
+    // 2. Clique no Sino 🔔
     document.getElementById('notif-badge')?.addEventListener('click', () => {
       this.navegarParaAba('noticias');
       this.notifCounter = 0;
       document.getElementById('notif-count').innerText = 0;
     });
 
-    // 3. Filtro Duplo de Vagas (Modalidade + Stack)
+    // 3. Filtro Duplo de Vagas
     const aplicarFiltroVagas = () => {
       const modalidade = document.getElementById('filtro-vaga-tipo').value;
       const stack = document.getElementById('filtro-vaga-stack').value.toLowerCase().trim();
@@ -120,20 +161,26 @@ export const portalController = {
       portalView.renderVagas(document.getElementById('vagas-list'), filtradas);
     };
 
-    document.getElementById('filtro-vaga-tipo').addEventListener('change', aplicarFiltroVagas);
-    document.getElementById('filtro-vaga-stack').addEventListener('input', aplicarFiltroVagas);
+    document.getElementById('filtro-vaga-tipo')?.addEventListener('change', aplicarFiltroVagas);
+    document.getElementById('filtro-vaga-stack')?.addEventListener('input', aplicarFiltroVagas);
 
     // 4. Modais de Autenticação
     const modalAuth = document.getElementById('modal-auth');
     let isRegisterMode = false;
 
     document.addEventListener('click', (e) => {
-      if (e.target.id === 'btn-open-login') modalAuth.showModal();
-      if (e.target.id === 'close-auth') modalAuth.close();
-      if (e.target.id === 'btn-logout') authModel.logout().then(() => window.location.reload());
+      if (e.target.id === 'btn-open-login' || e.target.id === 'btn-open-login-drawer') {
+        document.getElementById('nav-drawer')?.classList.remove('open');
+        document.getElementById('drawer-backdrop')?.classList.remove('active');
+        modalAuth?.showModal();
+      }
+      if (e.target.id === 'close-auth') modalAuth?.close();
+      if (e.target.classList.contains('btn-logout-trigger') || e.target.id === 'btn-logout-perfil') {
+        authModel.logout().then(() => window.location.reload());
+      }
     });
 
-    document.getElementById('link-toggle-auth').addEventListener('click', (e) => {
+    document.getElementById('link-toggle-auth')?.addEventListener('click', (e) => {
       e.preventDefault();
       isRegisterMode = !isRegisterMode;
       document.getElementById('register-fields').style.display = isRegisterMode ? 'block' : 'none';
@@ -147,23 +194,23 @@ export const portalController = {
       }
     });
 
-    // 5. Termos de Uso / LGPD
+    // 5. Termos LGPD
     document.getElementById('link-abrir-termos')?.addEventListener('click', (e) => {
       e.preventDefault();
-      document.getElementById('modal-termos').showModal();
+      document.getElementById('modal-termos')?.showModal();
     });
 
     document.getElementById('close-termos')?.addEventListener('click', () => {
-      document.getElementById('modal-termos').close();
+      document.getElementById('modal-termos')?.close();
     });
 
     document.getElementById('btn-aceitar-termos-fechar')?.addEventListener('click', () => {
       document.getElementById('auth-termos').checked = true;
-      document.getElementById('modal-termos').close();
+      document.getElementById('modal-termos')?.close();
     });
 
-    // 6. Submissão Auth (Login / Cadastro)
-    document.getElementById('form-auth').addEventListener('submit', async (e) => {
+    // 6. Submissão Auth
+    document.getElementById('form-auth')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('auth-email').value;
       const pass = document.getElementById('auth-password').value;
@@ -184,7 +231,7 @@ export const portalController = {
 
           await authModel.register(email, pass, nome);
           alert('📧 Cadastro efetuado! Um link de ativação foi enviado para o seu e-mail. Por favor, confirme antes de realizar o primeiro acesso.');
-          modalAuth.close();
+          modalAuth?.close();
         } else {
           await authModel.login(email, pass);
           window.location.reload();
@@ -197,15 +244,15 @@ export const portalController = {
     // 7. Modais Operacionais
     const bindModal = (openId, modalId, closeId) => {
       document.addEventListener('click', (e) => {
-        if (e.target.id === openId) document.getElementById(modalId).showModal();
-        if (e.target.id === closeId) document.getElementById(modalId).close();
+        if (e.target.id === openId) document.getElementById(modalId)?.showModal();
+        if (e.target.id === closeId) document.getElementById(modalId)?.close();
       });
     };
 
     bindModal('btn-open-proj-modal', 'modal-projeto', 'close-projeto');
     bindModal('btn-open-vaga-modal', 'modal-vaga', 'close-vaga');
 
-    // 8. Edição do Próprio Perfil do Aluno (RESTABELECIDO)
+    // 8. Edição de Perfil do Aluno
     const modalEditPerfil = document.getElementById('modal-edit-perfil');
     document.getElementById('btn-open-edit-perfil')?.addEventListener('click', () => {
       if (!this.currentSession?.perfil) return;
@@ -217,11 +264,11 @@ export const portalController = {
       document.getElementById('mep-github').value = p.github_url || '';
       document.getElementById('mep-linkedin').value = p.linkedin_url || '';
 
-      modalEditPerfil.showModal();
+      modalEditPerfil?.showModal();
     });
 
     document.getElementById('close-edit-perfil')?.addEventListener('click', () => {
-      modalEditPerfil.close();
+      modalEditPerfil?.close();
     });
 
     document.getElementById('form-edit-perfil')?.addEventListener('submit', async (e) => {
@@ -242,14 +289,14 @@ export const portalController = {
         portalView.renderPerfil(perfilNovo, badges);
 
         alert('✅ Perfil atualizado com sucesso!');
-        modalEditPerfil.close();
+        modalEditPerfil?.close();
       } catch (err) {
         alert('Erro ao atualizar perfil: ' + err.message);
       }
     });
 
     // 9. Submissão de Projeto
-    document.getElementById('form-projeto').addEventListener('submit', async (e) => {
+    document.getElementById('form-projeto')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!this.currentSession) return alert('Faça login para submeter projetos!');
 
@@ -269,7 +316,7 @@ export const portalController = {
     });
 
     // 10. Submissão de Vaga
-    document.getElementById('form-vaga').addEventListener('submit', async (e) => {
+    document.getElementById('form-vaga')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!this.currentSession) return alert('Faça login para submeter vagas!');
 
@@ -294,10 +341,8 @@ export const portalController = {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
 
-    const btn = document.querySelector(`.nav-btn[data-tab="${abaId}"]`);
+    document.querySelectorAll(`.nav-btn[data-tab="${abaId}"]`).forEach(b => b.classList.add('active'));
     const section = document.getElementById(`section-${abaId}`);
-
-    if (btn) btn.classList.add('active');
     if (section) section.classList.add('active');
   },
 
