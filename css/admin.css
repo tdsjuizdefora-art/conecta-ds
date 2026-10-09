@@ -658,3 +658,19 @@ body {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   OCULTAR MÓDULO DE OPORTUNIDADES NO BACKOFFICE
+   ========================================================================== */
+[data-view="vagas"],
+#view-vagas,
+.metric-card:has(#metric-vagas-pendentes) {
+  display: none !important;
+}
+
+/* Reorganiza o Dashboard para os 3 cards restantes preencherem a tela */
+@media (min-width: 1024px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}

@@ -736,3 +736,17 @@ form textarea:focus {
   text-decoration: none;
   font-weight: 600;
 }
+
+/* ==========================================================================
+   OCULTAR MÓDULO DE OPORTUNIDADES TEMPORARIAMENTE
+   ========================================================================== */
+[data-tab="vagas"],
+#section-vagas,
+.feed-column:has(#feed-vagas) {
+  display: none !important;
+}
+
+/* Faz a coluna de Comunicados ocupar 100% da largura no Feed */
+.feed-grid {
+  grid-template-columns: 1fr !important;
+}

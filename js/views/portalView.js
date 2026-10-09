@@ -17,7 +17,7 @@ export const portalView = {
         <strong style="color:#fff;">${v.titulo}</strong>
         <p style="font-size:0.85rem; color:var(--accent);">${v.empresa}</p>
       </div>
-    `).join('') || '<p>Sem vagas registradas.</p>';
+    `).join('') || '<p>Sem oportunidades registradas.</p>';
   },
 
   renderNoticias(container, noticias) {
@@ -111,9 +111,9 @@ export const portalView = {
     if (perfil.role === 'empresa') {
       badgesCard.innerHTML = `
         <h3>Painel da Empresa Parceira 🏢</h3>
-        <p class="card-meta">Sua organização está autorizada a submeter vagas diretamente ao mural.</p>
+        <p class="card-meta">Sua organização está autorizada a submeter oportunidades diretamente ao mural.</p>
         <div style="margin-top: 1.5rem;">
-          <button id="btn-open-vaga-modal-perfil" class="btn-primary">+ Divulgar Nova Vaga</button>
+          <button id="btn-open-vaga-modal-perfil" class="btn-primary">+ Divulgar Nova Oportunidade</button>
         </div>
       `;
       document.getElementById('btn-open-vaga-modal-perfil')?.addEventListener('click', () => {

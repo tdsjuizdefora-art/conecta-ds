@@ -283,7 +283,7 @@ async function carregarVagas() {
         </div>
       </td>
     </tr>
-  `).join('') || `<tr><td colspan="5" style="text-align: center; color: var(--text-subtle);">Nenhuma vaga registrada.</td></tr>`;
+  `).join('') || `<tr><td colspan="5" style="text-align: center; color: var(--text-subtle);">Nenhuma oportunidade registrada.</td></tr>`;
 
   tbody.querySelectorAll('.btn-aprovar-vaga').forEach(b => {
     b.onclick = async () => {
@@ -336,7 +336,7 @@ async function carregarVagas() {
           <label>Link ou E-mail para Candidatura:</label>
           <input type="text" id="ev-link" value="${v.link_candidatura}" required>
           
-          <label>Situação da Vaga:</label>
+          <label>Situação da Oportunidade:</label>
           <select id="ev-status">
             <option value="aprovada" ${v.status === 'aprovada' ? 'selected' : ''}>Aprovada</option>
             <option value="pendente" ${v.status === 'pendente' ? 'selected' : ''}>Pendente</option>
@@ -371,7 +371,7 @@ async function carregarVagas() {
     btnNovaVaga.onclick = () => {
       abrirModal('Cadastrar Oportunidade', `
         <form id="form-modal-vaga">
-          <label>Título da Vaga:</label><input type="text" id="mv-titulo" required placeholder="Ex: Estágio em Desenvolvimento Web">
+          <label>Título da Oportunidade:</label><input type="text" id="mv-titulo" required placeholder="Ex: Estágio em Desenvolvimento Web">
           <label>Empresa Parceira:</label><input type="text" id="mv-empresa" required placeholder="Nome da empresa">
           <label>Localização / Formato:</label><input type="text" id="mv-local" required placeholder="Remoto ou Juiz de Fora - MG">
           <label>Modalidade:</label>
@@ -384,7 +384,7 @@ async function carregarVagas() {
           <label>Remuneração / Bolsa (Opcional):</label><input type="text" id="mv-remun" placeholder="Ex: R$ 1.600 + VT">
           <label>Requisitos Técnicos:</label><input type="text" id="mv-tech" required placeholder="Ex: HTML, CSS, JavaScript">
           <label>Link ou E-mail para Envio de CV:</label><input type="text" id="mv-link" required placeholder="https://... ou vagas@empresa.com">
-          <button type="submit" class="btn-primary block">Publicar Vaga Aprovada</button>
+          <button type="submit" class="btn-primary block">Publicar Oportunidade Aprovada</button>
         </form>
       `);
 
