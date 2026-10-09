@@ -9,18 +9,31 @@ export const portalController = {
   todasVagas: [],
 
   async init() {
+    // 1. CAPTURA IMEDIATA DA URL (Antes de qualquer requisição de rede limpar os parâmetros)
+    const urlCompleta = window.location.href;
+    const hashOriginal = window.location.hash;
+    const searchOriginal = window.location.search;
+
+    // 2. REGISTRA O OUVINTE OFICIAL DO SUPABASE PARA RECUPERAÇÃO DE SENHA
+    supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        this.abrirModalRedefinirSenha();
+      }
+    });
+
+    // 3. TRATA RETORNO DO E-MAIL IMEDIATAMENTE (Erros, Confirmação ou Recuperação)
+    this.tratarRetornoEmail(urlCompleta, hashOriginal, searchOriginal);
+
+    // 4. RECUPERA SESSÃO DO USUÁRIO
     this.currentSession = await authModel.getSession();
 
-    // 1. BLOQUEIO DISCIPLINAR
+    // 5. BLOQUEIO DISCIPLINAR
     if (this.currentSession?.perfil?.status === 'banido') {
       alert('⚠️ Sua conta foi suspensa pela coordenação da instituição por descumprimento das diretrizes da comunidade.');
       await authModel.logout();
       window.location.reload();
       return;
     }
-
-    // 2. TRATAMENTO DE LINKS DE EMAIL (CONFIRMAÇÃO OU RECUPERAÇÃO DE SENHA)
-    this.tratarRetornoConfirmacaoEmail();
 
     const isProfessor = this.currentSession?.perfil?.role === 'professor';
 
@@ -31,25 +44,45 @@ export const portalController = {
     this.iniciarRealtime();
   },
 
-  tratarRetornoConfirmacaoEmail() {
-    const hash = window.location.hash;
-
-    // Caso A: Usuário clicou no link de redefinição de senha
-    if (hash.includes('type=recovery')) {
-      const modalRedefinir = document.getElementById('modal-redefinir-senha');
-      if (modalRedefinir) {
-        modalRedefinir.showModal();
-      }
+  // Processa links vindos do e-mail de forma resiliente
+  tratarRetornoEmail(url, hash, search) {
+    // A) Detecta se o link veio com erro (ex: link expirado ou já utilizado)
+    if (url.includes('error_description=')) {
+      const match = url.match(/error_description=([^&]+)/);
+      const erro = match ? decodeURIComponent(match[1].replace(/\+/g, ' ')) : 'O link de acesso é inválido ou expirou.';
+      alert('⚠️ Atenção: ' + erro + '\n\nPor favor, solicite um novo link se necessário.');
+      window.history.replaceState(null, null, window.location.pathname);
       return;
     }
 
-    // Caso B: Usuário confirmou cadastro pela primeira vez
-    if (hash.includes('access_token=')) {
-      if (hash.includes('type=signup')) {
-        alert('🎉 E-mail confirmado com sucesso! Seja bem-vindo(a) ao Conecta DS.');
-      }
-      // Limpa o hash longo da URL sem recarregar
+    // B) Detecta link de recuperação de senha pela URL
+    if (hash.includes('type=recovery') || search.includes('type=recovery') || url.includes('type=recovery')) {
+      this.abrirModalRedefinirSenha();
+      return;
+    }
+
+    // C) Detecta link de confirmação de cadastro pela primeira vez
+    if (hash.includes('type=signup') || url.includes('type=signup')) {
+      alert('🎉 E-mail confirmado com sucesso! Seja bem-vindo(a) ao Conecta DS.');
       window.history.replaceState(null, null, window.location.pathname);
+    }
+  },
+
+  abrirModalRedefinirSenha() {
+    const modalRedefinir = document.getElementById('modal-redefinir-senha');
+    if (modalRedefinir) {
+      // Pequeno timeout para garantir que o DOM esteja 100% pronto
+      setTimeout(() => {
+        try {
+          if (!modalRedefinir.open) {
+            modalRedefinir.showModal();
+          }
+        } catch (e) {
+          modalRedefinir.showModal();
+        }
+      }, 50);
+    } else {
+      console.error('Modal #modal-redefinir-senha não encontrado no index.html!');
     }
   },
 
@@ -57,7 +90,6 @@ export const portalController = {
     const authActions = document.getElementById('auth-actions');
     const drawerAuth = document.getElementById('drawer-auth-actions');
 
-    // Ativa visibilidade no desktop e na gaveta mobile
     document.querySelectorAll('.tab-btn-perfil').forEach(el => {
       el.style.display = this.currentSession ? 'flex' : 'none';
     });
