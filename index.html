@@ -180,6 +180,12 @@
 
         <label for="auth-password">Senha:</label>
         <input type="password" id="auth-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+		
+		<div style="text-align: right; margin-top: 0.35rem;">
+		  <a href="#" id="link-esqueci-senha" style="font-size: 0.75rem; color: var(--accent); text-decoration: none;">
+			Esqueci minha senha
+		  </a>
+		</div>
 
         <div id="register-fields" style="display: none;">
           <label for="auth-nome">Nome Completo (ou Razão Social se Empresa):</label>
@@ -318,6 +324,22 @@
       <button id="btn-aceitar-termos-fechar" class="btn-primary block">Entendido e Concordar</button>
     </div>
   </dialog>
+  
+  <!-- MODAL PARA DEFINIR NOVA SENHA -->
+	<dialog id="modal-redefinir-senha" class="modal">
+	  <div class="modal-content">
+		<button class="btn-close" id="close-redefinir">&times;</button>
+		<h3>Redefinir Senha</h3>
+		<p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0 1rem 0;">
+		  Digite sua nova senha abaixo para recuperar o acesso à sua conta.
+		</p>
+		<form id="form-redefinir-senha">
+		  <label>Nova Senha:</label>
+		  <input type="password" id="nova-senha-input" required minlength="6" placeholder="Mínimo 6 dígitos">
+		  <button type="submit" class="btn-primary block">Salvar Nova Senha</button>
+		</form>
+	  </div>
+	</dialog>
 
   <script type="module" src="js/app.js"></script>
 </body>

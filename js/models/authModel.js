@@ -40,6 +40,25 @@ export const authModel = {
     if (res.error) throw res.error;
     return res.data;
   },
+  
+  // Solicita envio do e-mail com link de redefinição
+  async recuperarSenha(email) {
+    const urlAtual = window.location.origin + window.location.pathname;
+    const res = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: urlAtual
+    });
+    if (res.error) throw res.error;
+    return res.data;
+  },
+
+  // Grava a nova senha escolhida pelo usuário
+  async atualizarSenha(novaSenha) {
+    const res = await supabase.auth.updateUser({
+      password: novaSenha
+    });
+    if (res.error) throw res.error;
+    return res.data;
+  },
 
   async logout() {
     return await supabase.auth.signOut();
